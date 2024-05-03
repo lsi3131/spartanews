@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import api_view
-
+from django.shortcuts import get_object_or_404
 
 class AccountAPIView(APIView):
     def post(self, request):
@@ -32,7 +32,7 @@ def profile(request, username):
     """
     프로필 조회(권한 : 모든 유저)
     """
-    user = get_user_model().objects.filter(username=username).first()
+    user = get_object_or_404(get_user_model(), username=username)
     return Response({
         "username": user.username,
         "date_joined": user.date_joined,
