@@ -63,6 +63,8 @@ class LikeyArticleAPIView(APIView):
     def post(self, request, article_pk):
         article = get_object_or_404(Article,pk=article_pk)
         user = request.user.id
+        
+        # if분 
         if article.likey.filter(pk=user).exists():
             return Response({'message': ''' '좋아요 취소'를 눌러주세요 '''}, status=400)
         
@@ -74,7 +76,7 @@ class LikeyArticleAPIView(APIView):
         article = get_object_or_404(Article,pk=article_pk)
         user = request.user.id
         if not article.likey.filter(pk=user):
-            return Response({'message': ''' '좋아요'를 눌러주세요. '''})
+            return Response({'message': ''' '좋아요'를 눌러주세요. '''},status=400)
         
         article.likey.remove(user)
         return Response({'message': '좋아요 취소'},status=200)
