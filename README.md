@@ -1,1 +1,3 @@
 # spartanews
+
+this is readme
