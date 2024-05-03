@@ -9,15 +9,19 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os.path
 from pathlib import Path
 import json
 from datetime import timedelta
 
-secrets = json.load(open("secrets.json"))
+BASE_DIR = Path(__file__).resolve().parent.parent
+secrets_path = os.path.join(BASE_DIR, "secrets.json")
+
+# secrets = json.load(open("secrets.json"))
+secrets = json.load(open(secrets_path))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
