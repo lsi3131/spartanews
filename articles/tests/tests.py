@@ -9,16 +9,31 @@ User = get_user_model()
 class CommentAPIViewTestCase(TestCase):
     def login_as_user(self):
         self.user = User.objects.create_user(username='user', password='password')
+        self.article_link = 'https://github.com/leftmove/cria'
 
-    def test_create_comment(self):
+    def test_create_child_comments_and_get_children(self):
         self.login_as_user()
-        article_link = 'https://github.com/leftmove/cria'
-        article = Article.objects.create(title='title', article_type='news', article_link=article_link,
+        article = Article.objects.create(title='title', article_type='news', article_link=self.article_link,
                                          content='content', author=self.user)
 
-        comment1 = Comment.objects.create(article=article, content='comment1')
-        comment2 = Comment.objects.create(article=article, content='comment1')
+        comment_root = Comment.objects.create(article=article, content='comment root')
+        comment_child1 = Comment.objects.create(article=article, content='comment child1', parent_comment=comment_root)
+        comment_child2 = Comment.objects.create(article=article, content='comment child2', parent_comment=comment_root)
 
-        # Comment.objects.create()
-        # self.user = User.objects.create_user(username='testuser', password='password')
-        # self.client.force_authenticate(user=self.user)
+        Comment.objects.create(article=article, content='comment grand child1',
+                                                       parent_comment=comment_child1)
+        Comment.objects.create(article=article, content='comment grand child2',
+                                                       parent_comment=comment_child1)
+
+        children = comment_root.get_children()
+        self.assertEqual(2, len(children))
+        self.assertEqual(2, len(comment_child1.get_children()))
+        self.assertEqual(0, len(comment_child2.get_children()))
+
+    def test_create_child_comments_and_get_children_with_view(self):
+        self.login_as_user()
+        article = Article.objects.create(title='title', article_type='news', article_link=self.article_link,
+                                         content='content', author=self.user)
+
+
+
