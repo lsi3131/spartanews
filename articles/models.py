@@ -11,7 +11,7 @@ class Article(models.Model):
     )
     title = models.CharField(max_length=100)
     article_type = models.CharField(max_length=10, choices=ARTICLE_TYPE_CHOICES, default='news')
-    article_link = models.URLField()
+    article_link = models.URLField(blank=True)
     content = models.TextField()
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
     likey = models.ManyToManyField(AUTH_USER_MODEL, related_name='article_likey', blank=True)
