@@ -5,6 +5,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 
 class AccountAPIView(APIView):
@@ -29,17 +31,27 @@ class AccountAPIView(APIView):
         return Response({"username": username}, status=status.HTTP_201_CREATED)
 
     def put(self, request):
-        username = request.user
-
-        user = get_user_model().objects.filter(username=username).first()
-        print(user.date_joined)
-
+        """
+        회원정보(자기소개, 이메일 수정)
+        """
+        # token으로부터 user정보 가져오기
+        username = request.user.username
+        # 로그인한 user의 db가져오기
+        user = get_object_or_404(get_user_model(), username=username)
         
-        # .is_valid(raise_exception+True)
-        # .save()
+        # 변경요청 데이터 가져오기
+        introduce = request.data.get("introduce")
+        email = request.data.get("email")
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            print("유효하지 않은 이메일 주소입니다.")
         
-        # print(request.data)
-        return Response({})
+        user.introduce = introduce
+        user.email = email
+        user.save()
+        return Response({"introduce":introduce, "email":email})
 
 
 @api_view(['GET'])
