@@ -9,7 +9,8 @@ class Article(models.Model):
         ('show', 'Show'),
     )
     title = models.CharField(max_length=100)
-    article_type = models.TextChoices('ArticleType', ARTICLE_TYPE_CHOICES)
+    # article_type = models.TextChoices('ArticleType', ARTICLE_TYPE_CHOICES)
+    article_type = models.CharField(max_length=10, choices=ARTICLE_TYPE_CHOICES, default='news')
     article_link = models.URLField()
     content = models.TextField()
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
