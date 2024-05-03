@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import BasePermission
+
 
 class AccountAPIView(APIView):
     def post(self, request):
@@ -25,6 +27,19 @@ class AccountAPIView(APIView):
         get_user_model().objects.create_user(
             username=username, password=data.get("password"))
         return Response({"username": username}, status=status.HTTP_201_CREATED)
+
+    def put(self, request):
+        username = request.user
+
+        user = get_user_model().objects.filter(username=username).first()
+        print(user.date_joined)
+
+        
+        # .is_valid(raise_exception+True)
+        # .save()
+        
+        # print(request.data)
+        return Response({})
 
 
 @api_view(['GET'])
