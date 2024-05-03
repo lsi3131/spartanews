@@ -35,9 +35,9 @@ class AccountAPIView(APIView):
         회원정보(자기소개, 이메일 수정)
         """
         # token으로부터 user정보 가져오기
-        username = request.user.username
+        pk = request.user.pk
         # 로그인한 user의 db가져오기
-        user = get_object_or_404(get_user_model(), username=username)
+        user = get_object_or_404(get_user_model(), pk=pk)
         
         # 변경요청 데이터 가져오기
         introduce = request.data.get("introduce")
@@ -53,6 +53,11 @@ class AccountAPIView(APIView):
         user.save()
         return Response({"introduce":introduce, "email":email})
 
+    def delete(self, request):
+        login_user_pk = request.user.pk
+        user = get_object_or_404(get_user_model(), pk=login_user_pk)
+        user.delete()
+        return Response({"message":"회원탈퇴가 정상적으로 처리되었습니다."})
 
 @api_view(['GET'])
 def profile(request, username):
