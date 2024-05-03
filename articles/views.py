@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly,IsAuthenticated
 # Create your views here.
 
 from .serializers import ArticleSerializer, ArticleDetailSerializer
-from .models import Article
+from .models import Article, Comment
 
 # Create your views here.
 class ArticleAPIView(APIView):
@@ -74,8 +74,33 @@ class LikeyArticleAPIView(APIView):
     def delete(self, request, article_pk):
         article = get_object_or_404(Article,pk=article_pk)
         user = request.user.id
+
         if not article.likey.filter(pk=user):
             return Response({'message': ''' '좋아요'를 눌러주세요. '''})
         
         article.likey.remove(user)
         return Response({'message': '좋아요 취소'},status=200)
+
+
+
+class RecommendAPIView(APIView):
+    def post(self, request, article_pk,comment_pk ):
+        comment = get_object_or_404(Comment, pk=comment_pk)
+        user = request.user.id
+
+        if comment.recommend.filter(pk=user).exists():
+            return Response({'message':''' '추천 취소'를 눌러주세요 '''})
+        
+        comment.recommend.add(user)
+        return Response({'message': '추천'})
+
+
+    def delete(self, request, article_pk,comment_pk ):
+        comment = get_object_or_404(Comment, pk=comment_pk)
+        user = request.user.id
+        
+        if not comment.recommend.filter(pk=user):
+            return Response({'message':''' '추천'을 눌러주세요 '''})
+
+        comment.recommend.remove(user)
+        return Response({'message': '추천 취소'})
