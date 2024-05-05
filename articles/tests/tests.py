@@ -38,7 +38,15 @@ class CommentAPIViewTestCase(TestCase):
                                          content='content', author=self.user)
 
         comment = Comment.objects.create(article=article, content='comment')
+
+        comment.recommend.add(self.user)
         url = reverse('articles:comment_detail', args=[article.id, comment.id])
 
         response = self.client.get(url, content_type='application/json')
-        self.assertEqual('comment', response.data['content'])
+        data = response.data
+        # {'id': 1, 'content': 'comment', 'created_at': '2024-05-05T07:53:50.267831Z', 'updated_at': '2024-05-05T07:53:50.267839Z', 'article': 1, 'parent_comment': None, 'recommend': [1]}
+        print(data)
+        self.assertEqual(comment.id, data['id'])
+        self.assertEqual(comment.content, data['content'])
+        self.assertEqual(comment.article_id, data['article'])
+        self.assertEqual(comment.parent_comment, data['parent_comment'])
