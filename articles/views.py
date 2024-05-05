@@ -31,7 +31,26 @@ class CommentDetailAPIView(APIView):
         }, status=status.HTTP_200_OK)
 
     def put(self, request: HttpRequest, article_pk, comment_pk):
-        return Response({'message': 'message'}, status=status.HTTP_200_OK)
+        comment = get_object_or_404(Comment, id=comment_pk)
+        # if article.author != request.user:
+        #     return Response(
+        #         {"error": "작성자만 수정할 수 있습니다."},
+        #         status=status.HTTP_403_FORBIDDEN
+        #     )
+        # data = request.data.copy()
+        # data["title"] = data.get("title", article.title)
+        # data["article_type"] = data.get("article_type", article.article_type)
+        # data["article_link"] = data.get("article_link", article.article_link)
+        # data["content"] = data.get("content", article.content)
+        # message = validate_article_data(data)
+        # if message:
+        #     return Response(message, status=status.HTTP_400_BAD_REQUEST)
+        # article.__dict__.update(**data)
+        # article.save()
+        return Response(
+            {"message": "댓글이 수정되었습니다."},
+            status=status.HTTP_200_OK
+        )
 
     def delete(self, request: HttpRequest, article_pk, comment_pk):
         return Response({'message': 'message'}, status=status.HTTP_200_OK)

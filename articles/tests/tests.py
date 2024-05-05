@@ -50,3 +50,26 @@ class CommentAPIViewTestCase(TestCase):
         self.assertEqual(comment.content, data['content'])
         self.assertEqual(comment.article_id, data['article'])
         self.assertEqual(comment.parent_comment, data['parent_comment'])
+
+
+    '''
+    수정 내용
+     - 댓글 내용 수정
+    '''
+    def test_put_view(self):
+        self.login_as_user()
+        article = Article.objects.create(title='title', article_type='news', article_link=self.article_link,
+                                         content='content', author=self.user)
+
+        comment = Comment.objects.create(article=article, content='comment')
+
+        url = reverse('articles:comment_detail', args=[article.id, comment.id])
+
+        response = self.client.get(url, content_type='application/json')
+        data = response.data
+        print(data)
+        self.assertEqual(comment.id, data['id'])
+        self.assertEqual(comment.content, data['content'])
+        self.assertEqual(comment.article_id, data['article'])
+        self.assertEqual(comment.parent_comment, data['parent_comment'])
+
