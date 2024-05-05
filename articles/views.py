@@ -86,6 +86,19 @@ class ArticleDetailAPIView(APIView):
             status=status.HTTP_200_OK
         )
 
+    def delete(self, request, article_pk):
+        article = get_object_or_404(Article, id=article_pk)
+        if article.author != request.user:
+            return Response(
+                {"error": "작성자만 삭제할 수 있습니다."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        article.delete()
+        return Response(
+            {"message": "게시글이 삭제되었습니다."},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
 
 
 class LikeyArticleAPIView(APIView):
