@@ -18,7 +18,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 secrets_path = os.path.join(BASE_DIR, "secrets.json")
 
 # secrets = json.load(open("secrets.json"))
-secrets = json.load(open('secrets.json'))
+# secrets = json.load(open('secrets.json'))
+secrets = json.load(open(secrets_path))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # BASE_DIR = Path(__file__).resolve().parent.parent
