@@ -174,9 +174,14 @@ class ArticleCommentsAPIView(APIView):
         if message:
             return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+        content = data['content']
+        parent_comment_id = data.get('parent_comment_id', None)
+        parent_comment = None
+        if parent_comment_id:
+            parent_comment = get_object_or_404(Comment, id=parent_comment_id)
         article = get_object_or_404(Article, id=article_pk)
 
-        Comment.objects.create(**data, article=article, author=request.user)
+        Comment.objects.create(content=content, article=article, author=request.user, parent_comment=parent_comment)
         return Response(
             {"message": "댓글이 작성되었습니다."},
             status=status.HTTP_201_CREATED
@@ -222,4 +227,14 @@ class CommentDetailAPIView(APIView):
         )
 
     def delete(self, request, article_pk, comment_pk):
-        return Response({'message': 'message'}, status=status.HTTP_200_OK)
+        comment = get_object_or_404(Comment, id=comment_pk)
+        if comment.author != request.user:
+            return Response(
+                {"error": "작성자만 삭제할 수 있습니다."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        comment.delete()
+        return Response(
+            {"message": "댓글이 삭제되었습니다."},
+            status=status.HTTP_204_NO_CONTENT
+        )
