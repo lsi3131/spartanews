@@ -148,7 +148,8 @@ class ArticleCommentsAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, article_pk):
-        comments = get_list_or_404(Comment)
+        article = get_object_or_404(Article, id=article_pk)
+        comments = article.comments.all()
 
         response_data = []
         for comment in comments:
