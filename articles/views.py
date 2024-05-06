@@ -155,6 +155,7 @@ class ArticleCommentsAPIView(APIView):
             recommend = [r.id for r in comment.recommend.all()]
             response_data.append(
                 {
+                    "id": comment.id,
                     "article": comment.article.id,
                     "author": comment.author.username,
                     "parent_comment_id": comment.parent_comment_id,
@@ -202,8 +203,6 @@ class CommentDetailAPIView(APIView):
 
     def put(self, request, article_pk, comment_pk):
         comment = get_object_or_404(Comment, id=comment_pk)
-        print(request.user)
-        print(comment.author)
         if comment.author != request.user:
             return Response(
                 {"error": "작성자만 수정할 수 있습니다."},
