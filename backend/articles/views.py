@@ -3,13 +3,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly,IsAuthenticated
-# Create your views here.
-
 from .models import Article, Comment
 from .article_validate import validate_article_data
+from django.db.models import Count
 
 
-# Create your views here.
+
 class ArticleAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -149,3 +148,37 @@ class RecommendAPIView(APIView):
         comment.recommend.remove(user)
         return Response({'message': '추천 취소'})
 
+
+class ArticleLineUpAPIView(APIView):
+    def post(self, request):
+        line_up = request.data.get("line-up")
+        if line_up == "likey":
+            articles = Article.objects.annotate(likey_count=Count('likey')).order_by('-likey_count')
+        else:
+            return Response({"error": "Invalid line-up value"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response([
+            {
+            "id": article.id,
+            "title": article.title,
+            "article_type": article.article_type,
+            "article_link": article.article_link,
+            "author": article.author.username,
+            "created_at": article.created_at,
+            "comment_count": article.comments.count(),
+            "likey_count": article.likey.count(),
+            }
+            for article in articles
+        ])
+    
+
+# articles = get_list_or_404(Article)
+#         return Response([{
+#             "id": article.id,
+#             "title": article.title,
+#             "article_type": article.article_type,
+#             "article_link": article.article_link,
+#             "author": article.author.username,
+#             "created_at": article.created_at,
+#             "comment_count": article.comments.count(),
+#             "likey_count": article.likey.count(),
+#         } for article in articles])
