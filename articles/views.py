@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 # Create your views here.
 
 from .models import Article, Comment
@@ -11,11 +12,12 @@ from .article_validate import validate_article_data, validate_comment_data
 
 # Create your views here.
 class ArticleAPIView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
         articles = get_list_or_404(Article)
-        return Response([{
+        pageination = PageNumberPagination()
+        data =[{
             "id": article.id,
             "title": article.title,
             "article_type": article.article_type,
@@ -24,7 +26,9 @@ class ArticleAPIView(APIView):
             "created_at": article.created_at,
             "comment_count": article.comments.count(),
             "likey_count": article.likey.count(),
-        } for article in articles])
+        } for article in articles]
+        pageination.paginate_queryset(data,request)
+        return pageination.get_paginated_response(data)
 
     def post(self, request):
         data = request.data.copy()
