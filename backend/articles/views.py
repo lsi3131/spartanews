@@ -17,6 +17,7 @@ class ArticleAPIView(APIView):
         return Response([{
             "id": article.id,
             "title": article.title,
+            "content": article.content,
             "article_type": article.article_type,
             "article_link": article.article_link,
             "author": article.author.username,
@@ -166,6 +167,7 @@ class ArticleLineUpAPIView(APIView):
             {
             "id": article.id,
             "title": article.title,
+            "content": article.content,
             "article_type": article.article_type,
             "article_link": article.article_link,
             "author": article.author.username,
