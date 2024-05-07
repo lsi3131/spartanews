@@ -18,8 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 secrets_path = os.path.join(BASE_DIR, "secrets.json")
 
 # secrets = json.load(open("secrets.json"))
-# secrets = json.load(open('secrets.json'))
-secrets = json.load(open(secrets_path))
+secrets = json.load(open('secrets.json'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,6 +49,7 @@ INSTALLED_APPS = [
     "accounts.apps.AccountsConfig",
     "articles.apps.ArticlesConfig",
     "rest_framework_simplejwt.token_blacklist",
+    "corsheaders"
 ]
 
 MIDDLEWARE = [
@@ -60,6 +60,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -78,6 +79,10 @@ TEMPLATES = [
             ],
         },
     },
+]
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:3000",  
+    "http://localhost:3000",
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
@@ -145,8 +150,9 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=10),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
 }
+CORS_ALLOW_CREDENTIALS = True

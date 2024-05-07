@@ -28,4 +28,3 @@ def validate_comment_data(data):
     if not content:
         return {"error": "내용을 입력해주세요."}
     return None
-

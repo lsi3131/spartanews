@@ -1,0 +1,36 @@
+.navbar {
+    font-size: 25px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff; /* Navbar의 배경색을 흰색으로 설정합니다. */
+    padding: 20px 50px; /* Navbar의 내부 여백을 지정합니다. */
+    z-index: 1000; /* 다른 요소 위에 Navbar가 표시되도록 z-index를 설정합니다. */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과를 추가합니다. */
+}
+.navbar .left {
+    float: left;
+}
+
+.left a {
+    margin-right: 30px;
+}
+
+.navbar .right {
+    float: right;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.navbar a:hover {
+    color: #0000002c;
+}
+
+.navbar a:focus {
+    color: #f80000b2;
+}

@@ -4,12 +4,13 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import BasePermission
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-
+from accounts.permissions import CustomPermission
 
 class AccountAPIView(APIView):
+    permission_classes = [CustomPermission]
+
     def post(self, request):
         """
         회원가입(권한 : 모든 유저)
@@ -54,6 +55,9 @@ class AccountAPIView(APIView):
         return Response({"introduce":introduce, "email":email})
 
     def delete(self, request):
+        """
+        회원탈퇴
+        """
         login_user_pk = request.user.pk
         user = get_object_or_404(get_user_model(), pk=login_user_pk)
         user.delete()
@@ -62,7 +66,7 @@ class AccountAPIView(APIView):
 @api_view(['GET'])
 def profile(request, username):
     """
-    프로필 조회(권한 : 모든 유저)
+    프로필 조회(권한 : 없음)
     """
     user = get_object_or_404(get_user_model(), username=username)
     return Response({

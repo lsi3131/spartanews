@@ -27,15 +27,8 @@ class Article(models.Model):
 class Comment(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
-    parent_comment = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    parent_comment = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     content = models.TextField()
     recommend = models.ManyToManyField(AUTH_USER_MODEL, related_name='comment_recommend', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def get_children(self):
-        descendants = []
-        for child in self.children.all():
-            descendants.append(child)
-            # descendants.extend(child.get_children())
-        return descendants
