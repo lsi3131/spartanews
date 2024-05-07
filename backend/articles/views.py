@@ -151,11 +151,17 @@ class RecommendAPIView(APIView):
 
 class ArticleLineUpAPIView(APIView):
     def post(self, request):
+        # 좋아요를 기준으로 정렬하도록
+        # `line-up`이라는 key에 'likey'가 들어오도록 합니다.
         line_up = request.data.get("line-up")
+
         if line_up == "likey":
+            # Article에 likey속성을 추가하고, 정렬합니다.
             articles = Article.objects.annotate(likey_count=Count('likey')).order_by('-likey_count')
+        # 'likey'가 기준으로 입력되지 않은 경우, 오류를 반환합니다.
         else:
             return Response({"error": "Invalid line-up value"}, status=status.HTTP_400_BAD_REQUEST)
+        
         return Response([
             {
             "id": article.id,
@@ -170,15 +176,3 @@ class ArticleLineUpAPIView(APIView):
             for article in articles
         ])
     
-
-# articles = get_list_or_404(Article)
-#         return Response([{
-#             "id": article.id,
-#             "title": article.title,
-#             "article_type": article.article_type,
-#             "article_link": article.article_link,
-#             "author": article.author.username,
-#             "created_at": article.created_at,
-#             "comment_count": article.comments.count(),
-#             "likey_count": article.likey.count(),
-#         } for article in articles])
