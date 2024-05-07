@@ -13,6 +13,10 @@
     float: left;
 }
 
+.left a {
+    margin-right: 30px;
+}
+
 .navbar .right {
     float: right;
 }
