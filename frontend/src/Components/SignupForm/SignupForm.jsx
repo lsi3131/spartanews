@@ -19,11 +19,6 @@ const SignupForm = () => {
     function signup() {
         const text = `id=${username}, password=${password}, password-check=${passwordCheck}, email=${email}, introduce=${introduce}`
         console.log(text)
-        /*
-            다음 정보를 체크한다.
-            1. password, passwordCheck가 동일한지 여부
-            2. id, password 작성 여부
-         */
         setErrorMessage('')
         setShowError(false)
         // 필수 입력요소가 없을 경우 메시지 전달
@@ -71,6 +66,10 @@ const SignupForm = () => {
             });
     }
 
+    function checkUserName(e) {
+        setUsername(e.target.value)
+    }
+
     return (
         <div className="signup-content">
             <div className="signup-wrapper">
@@ -79,7 +78,7 @@ const SignupForm = () => {
                     type="text"
                     placeholder="아이디를 입력해주세요"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => checkUserName(e.target.value)}
                     required
                 />
                 <p>아미 존재하는 아이디입니다.</p>

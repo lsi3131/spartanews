@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import HttpRequest
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -7,6 +8,11 @@ from django.shortcuts import get_object_or_404
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from accounts.permissions import CustomPermission
+from .util import AccountValidator
+import re
+
+validator = AccountValidator()
+
 
 class AccountAPIView(APIView):
     permission_classes = [CustomPermission]
@@ -39,7 +45,7 @@ class AccountAPIView(APIView):
         pk = request.user.pk
         # 로그인한 user의 db가져오기
         user = get_object_or_404(get_user_model(), pk=pk)
-        
+
         # 변경요청 데이터 가져오기
         introduce = request.data.get("introduce")
         email = request.data.get("email")
@@ -48,11 +54,11 @@ class AccountAPIView(APIView):
             validate_email(email)
         except ValidationError:
             print("유효하지 않은 이메일 주소입니다.")
-        
+
         user.introduce = introduce
         user.email = email
         user.save()
-        return Response({"introduce":introduce, "email":email})
+        return Response({"introduce": introduce, "email": email})
 
     def delete(self, request):
         """
@@ -61,7 +67,8 @@ class AccountAPIView(APIView):
         login_user_pk = request.user.pk
         user = get_object_or_404(get_user_model(), pk=login_user_pk)
         user.delete()
-        return Response({"message":"회원탈퇴가 정상적으로 처리되었습니다."})
+        return Response({"message": "회원탈퇴가 정상적으로 처리되었습니다."})
+
 
 @api_view(['GET'])
 def profile(request, username):
@@ -77,3 +84,21 @@ def profile(request, username):
         "introduce": user.introduce,
         "email": user.email
     })
+
+
+@api_view(['POST'])
+def validate_password(request):
+    validator.validate('password', request)
+    return validator.get_response_data()
+
+
+@api_view(['POST'])
+def validate_username(request):
+    validator.validate('username', request)
+    return validator.get_response_data()
+
+
+@api_view(['POST'])
+def validate_email(request):
+    validator.validate('email', request)
+    return validator.get_response_data()
