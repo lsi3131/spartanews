@@ -4,6 +4,7 @@ import { MdLock } from 'react-icons/md'
 import axios from 'axios'
 
 import './LoginForm.css'
+import {Link} from "react-router-dom";
 
 const LoginForm = () => {
     const [username, setUsername] = React.useState('')
@@ -60,7 +61,8 @@ const LoginForm = () => {
                     <button type="submit">로그인</button>
                     <div className="register-link">
                         <p>
-                            계정이 없으신가요? <a href="#">회원가입</a>
+                            계정이 없으신가요?
+                            <Link to="/signup">회원가입</Link>
                         </p>
                     </div>
                 </form>

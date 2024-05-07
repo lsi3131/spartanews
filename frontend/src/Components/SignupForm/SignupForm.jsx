@@ -2,69 +2,65 @@ import React from 'react'
 import axios from 'axios'
 
 import './SignupForm.css'
+import {Container, Row, Col, Button} from "react-bootstrap";
 
-const LoginForm = () => {
+const SignupForm = () => {
     const [username, setUsername] = React.useState('')
     const [password, setPassword] = React.useState('')
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        try {
-            const response = await axios.post('http://127.0.0.1:8000/api/login/', {
-                username: username,
-                password: password,
-            })
-            const { access, refresh } = response.data
-            localStorage.setItem('accessToken', access)
-            localStorage.setItem('refreshToken', refresh)
-            window.location.href = '/' // 혹은 메인 화면으로
-        } catch (error) {
-            console.error('로그인 오류:', error)
-            // 오류 처리 로직을 추가할 수 있습니다.
-        }
-    }
+    const [passwordCheck, setPasswordCheck] = React.useState('')
+    const [email, setEmail] = React.useState('')
 
     return (
-        <div className="login-content">
-            <div className="login-wrapper">
-                <h1>로그인</h1>
-                <form onSubmit={handleSubmit}>
-                    <div className="input-box">
-                        <input
-                            type="text"
-                            placeholder="아이디를 입력해주세요"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                        />
-                        <FaUser className="icon" />
-                    </div>
-                    <div className="input-box">
-                        <input
-                            type="password"
-                            placeholder="패스워드를 입력해주세요"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                        <MdLock className="icon" />
-                    </div>
-                    <div className="remember-forget">
-                        <label>
-                            <input type="checkbox" /> 로그인 정보 저장
-                        </label>
-                        <a href="#">패스워드를 잊어버리셨습니까?</a>
-                    </div>
-                    <button type="submit">로그인</button>
-                    <div className="register-link">
-                        <p>
-                            계정이 없으신가요? <a href="#">회원가입</a>
-                        </p>
-                    </div>
-                </form>
-            </div>
+        <div className="signup-content">
+            <Container className="input-box">
+                <Row className="signup-row">
+                    <Col className="bold-text signup-col">아이디</Col>
+                    <input
+                        type="text"
+                        placeholder="아이디를 입력해주세요"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
+                </Row>
+                <Row className="signup-row">
+                    <Col className="bold-text signup-col-title">비밀번호</Col>
+                    <input
+                        type="password"
+                        placeholder="비밀번호를 입력해주세요"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                </Row>
+                <Row className="signup-row">
+                    <Col className="bold-text signup-col-title">비밀번호 재확인</Col>
+                    <input
+                        type="password"
+                        placeholder="비밀번호를 입력해주세요"
+                        value={passwordCheck}
+                        onChange={(e) => setPasswordCheck(e.target.value)}
+                        required
+                    />
+                </Row>
+                <Row className="signup-row">
+                    <Col className="bold-text signup-col-title">이메일</Col>
+                    <input
+                        type="text"
+                        placeholder="이메일주소를 입력해주세요"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                </Row>
+                <Row className="signup-row">
+                    <Col xs={12}>
+                        <Button variant="primary">가입하기</Button>{' '}
+                    </Col>
+                </Row>
+            </Container>
         </div>
     )
 }
 
-export default LoginForm
+export default SignupForm
