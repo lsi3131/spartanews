@@ -72,79 +72,59 @@ const SignupForm = () => {
     }
 
     return (
-        <div className="signup-content p-4">
-            <Container className="input-box signup-wrapper">
-                <Row className="">
-                    <Col className="bold-text signup-col">아이디</Col>
-                    <input
-                        type="text"
-                        placeholder="아이디를 입력해주세요"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </Row>
-                <Row className="mt-2">
-                    <Col className="bold-text signup-col-title">비밀번호</Col>
-                    <input
-                        type="password"
-                        placeholder="비밀번호를 입력해주세요"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </Row>
-                <Row className="mt-2">
-                    <Col className="bold-text signup-col-title">비밀번호 재확인</Col>
-                    <input
-                        type="password"
-                        placeholder="비밀번호를 입력해주세요"
-                        value={passwordCheck}
-                        onChange={(e) => setPasswordCheck(e.target.value)}
-                        required
-                    />
-                </Row>
+        <div className="signup-content">
+            <div className="signup-wrapper">
+                <h4 className="inputName">아이디</h4>
+                <input
+                    type="text"
+                    placeholder="아이디를 입력해주세요"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                />
+                <p>아미 존재하는 아이디입니다.</p>
+
+                <h4 className="inputName">비밀번호</h4>
+                <input
+                    type="password"
+                    placeholder="비밀번호를 입력해주세요"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+
+                <h4 className="inputName">비밀번호 재확인</h4>
+                <input
+                    type="password"
+                    placeholder="비밀번호를 입력해주세요"
+                    value={passwordCheck}
+                    onChange={(e) => setPasswordCheck(e.target.value)}
+                    required
+                />
+
                 {/* ======================
                     이메일 추가 시 인터페이스 적용
                 ==========================*/}
+                <h4 className="inputName">이메일</h4>
+                <input
+                    type="text"
+                    placeholder="이메일주소를 입력해주세요"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
 
-                {/*<Row className="mt-2">*/}
-                {/*    <Col className="bold-text signup-col-title">이메일</Col>*/}
-                {/*    <input*/}
-                {/*        type="text"*/}
-                {/*        placeholder="이메일주소를 입력해주세요"*/}
-                {/*        value={email}*/}
-                {/*        onChange={(e) => setEmail(e.target.value)}*/}
-                {/*        required*/}
-                {/*    />*/}
-                {/*</Row>*/}
+                <h4 className="inputName">자기소개</h4>
+                <textarea
+                    className="signup-textarea"
+                    placeholder="소개글을 입력해주세요"
+                    rows={5}
+                    value={introduce}
+                    onChange={(e) => setIntroduce(e.target.value)}
+                />
 
-                {/* ======================
-                    자기소개 추가 시 인터페이스 적용
-                ==========================*/}
-                {/*<Row className="mt-2">*/}
-                {/*    <Col className="bold-text signup-col-title">자기소개</Col>*/}
-                {/*    <textarea*/}
-                {/*        className="signup-textarea"*/}
-                {/*        placeholder="소개글을 입력해주세요"*/}
-                {/*        rows={5}*/}
-                {/*        value={introduce}*/}
-                {/*        onChange={(e) => setIntroduce(e.target.value)}*/}
-                {/*    />*/}
-                {/*</Row>*/}
-
-                <Row className="mt-3">
-                    <Button variant="primary" size="lg" onClick={signup}>가입하기</Button>{' '}
-                </Row>
-
-                {showError && (
-                    <Row className="mt-2">
-                        <Col>
-                            <Alert variant="danger">{errorMessage}</Alert>
-                        </Col>
-                    </Row>
-                )}
-            </Container>
+                <button onClick={signup}>회원가입</button>
+            </div>
         </div>
     )
 }

@@ -3,79 +3,62 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin-left: 30%;
-    margin-right: 30%;
-}
-
-.bold-text {
-    font-weight: bold;
 }
 
 .signup-wrapper {
-    width: 500px;
-    color: rgba(4, 4, 4, 0.502);
-    background-color: transparent;
+    width: 600px;
     border: 2px solid #00000029;
     backdrop-filter: blur(30px);
     box-shadow: 0 0 10px 0 #00000029;
-    padding: 30px 40px;
+    padding: 20px 40px;
     border-radius: 10px;
 }
 
-.signup-wrapper h1 {
-    font-size: 36px;
-    text-align: center;
-}
-
-.signup-wrapper .input-box {
+.inputName {
     position: relative;
-    margin: 30px 0;
-    height: 50px;
-}
-
-.input-box input {
-    width: 100%;
-    height: 100%;
-    padding: 0 20px;
-    font-size: 18px;
-    background: transparent;
-    border: 2px solid #00000029;
-    outline: none;
-    border-radius: 40px;
-    color: rgba(4, 4, 4, 0.502);
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: gray;
     font-weight: bold;
 }
 
-.input-box input:focus {
+.signup-wrapper > input,
+select {
+    height: 40px;
+    border-radius: 40px;
+}
+
+.signup-wrapper > textarea {
+    height: 150px;
+    border-radius: 20px;
+    padding-top: 20px;
+}
+
+.signup-wrapper > input,
+select,
+textarea {
+    width: 100%;
+    padding-left: 20px;
+    font-size: 16px;
+    outline: none;
+    background-color: transparent;
+    border: 2px solid #00000029;
+}
+
+.signup-wrapper > input:focus,
+select:focus,
+textarea:focus {
     border-color: gray;
 }
 
-.input-box input::placeholder {
-    color: rgba(4, 4, 4, 0.502);
-}
-
-.input-box .icon {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 20px;
-    font-size: 20px;
-    color: #00000029;
-}
-
-.signup-col-title {
-    margin-bottom: 3px; /* 원하는 값으로 조절합니다. */
-}
-
-.signup-textarea {
+.signup-wrapper > button {
     width: 100%;
-    height: 100%;
-    padding: 0 10px;
-    font-size: 18px;
-    background: transparent;
-    border: 2px solid #00000029;
-    outline: none;
-    border-radius: 10px;
-    color: rgba(4, 4, 4, 0.502);
+    margin-top: 20px;
+    height: 40px;
+    border-radius: 40px;
+    background-color: #434343b2;
+    color: white;
+    font-size: 16px;
     font-weight: bold;
+    cursor: pointer;
 }
