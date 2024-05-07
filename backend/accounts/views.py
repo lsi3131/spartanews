@@ -68,7 +68,6 @@ def profile(request, username):
     """
     프로필 조회(권한 : 없음)
     """
-    print(request.user)
     user = get_object_or_404(get_user_model(), username=username)
     return Response({
         "username": user.username,
