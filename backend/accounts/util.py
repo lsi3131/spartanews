@@ -60,7 +60,7 @@ class AccountValidator:
 
         # 이미 가입한 이메일 제한
         if get_user_model().objects.filter(email=email).exists():
-            self.response_data = Response({"error": "이미 가입한 계정입니다."}, status=status.HTTP_400_BAD_REQUEST)
+            self.response_data = Response({"error": "이미 가입한 이메일 주소입니다."}, status=status.HTTP_400_BAD_REQUEST)
             return False
 
         return True

@@ -3,7 +3,6 @@ import axios from 'axios'
 import {useNavigate} from "react-router-dom"
 
 import './SignupForm.css'
-import {Container, Row, Col, Button, Alert} from "react-bootstrap";
 
 const SignupForm = () => {
     const [username, setUsername] = React.useState('')
@@ -11,36 +10,52 @@ const SignupForm = () => {
     const [passwordCheck, setPasswordCheck] = React.useState('')
     const [email, setEmail] = React.useState('')
     const [introduce, setIntroduce] = React.useState('')
-    const [showError, setShowError] = React.useState(false);
-    const [errorMessage, setErrorMessage] = React.useState('');
+    const [usernameMessage, setUsernameMessage] = React.useState('');
+    const [passwordMessage, setPasswordMessage] = React.useState('');
+    const [passwordCheckMessage, setPasswordCheckMessage] = React.useState('');
+    const [emailCheckMessage, setEmailCheckMessage] = React.useState('');
+
+    // 제출용 데이터 정보. username, email, password가 입력이 되어 있어야 제출 가능
+    const [formValidateChecker, setFormValidateChecker] = React.useState({
+        username: false,
+        email: false,
+        password: false,
+        passwordCheck: false
+    })
+
     const navigate = useNavigate();
 
+    function getUrl(subUrl) {
+        const urlRoot = 'http://127.0.0.1:8000'
+        return `${urlRoot}${subUrl}`
+    }
 
-    function signup() {
-        const text = `id=${username}, password=${password}, password-check=${passwordCheck}, email=${email}, introduce=${introduce}`
-        console.log(text)
-        setErrorMessage('')
-        setShowError(false)
-        // 필수 입력요소가 없을 경우 메시지 전달
-        if (!username || !password || !passwordCheck) {
-            let message = '';
-            if (!username) {
-                message = '사용자 이름을 입력해주세요'
-            } else if (!password) {
-                message = '비밀번호를 입력해주세요'
-            } else if (!passwordCheck) {
-                message = '비밀번호 재확인을 입력해주세요'
-            }
-            setShowError(true);
-            setErrorMessage(message)
-            return;
+    async function signup() {
+        try {
+            await checkUserName();
+            await checkPassword();
+            await checkPasswordCheck();
+            await checkEmail();
+        } catch (error) {
+            console.log(error)
         }
 
-        if (password !== passwordCheck) {
-            let message = '비밀번호가 일치하지 않습니다'
-            setShowError(true);
-            setErrorMessage(message)
-            return;
+        if (formValidateChecker.username === false) {
+            //user로 페이징
+            console.log('invalid username');
+            return
+        } else if (formValidateChecker.email === false) {
+            //이메일로 페이징
+            console.log('invalid email');
+            return
+        } else if (formValidateChecker.password === false) {
+            //비밀번호로 페이징
+            console.log('invalid password');
+            return
+        } else if (formValidateChecker.passwordCheck === false) {
+            //비밀번호 체크로 페이징
+            console.log('invalid password check');
+            return
         }
 
         const data = {
@@ -50,24 +65,123 @@ const SignupForm = () => {
             introduce: introduce
         };
 
-        const urlRoot = 'http://127.0.0.1:8000'
-        const url = `${urlRoot}/api/accounts/`
-
-        axios.post(url, data)
-            .then(response => {
-                console.log('Signup successful:', response.data);
-                navigate('/login');
-            })
-            .catch(error => {
-                console.error('Error during signup:', error.response.data.error);
-
-                setErrorMessage(error.response.data.error)
-                setShowError(true)
-            });
+        const url =  getUrl('/api/accounts/')
+        try {
+            const response = await axios.post(url, data)
+            console.log('Signup successful:', response.data);
+            navigate('/login');
+        } catch (error) {
+            console.error('Error during signup:', error.response.data.error);
+        }
     }
 
-    function checkUserName(e) {
-        setUsername(e.target.value)
+    async function checkUserName() {
+        if (username === '') {
+            setUsernameMessage('')
+            return
+        }
+
+        const data = {
+            'data': username
+        }
+
+        const url =  getUrl('/api/accounts/validate/username/')
+        try {
+            const response = await axios.post(url, data)
+            setUsernameMessage('')
+            setFormValidateChecker({
+                ...formValidateChecker,
+                'username': true
+            })
+        } catch (error) {
+            setUsernameMessage(error.response.data.error)
+            setFormValidateChecker({
+                ...formValidateChecker,
+                'username': false
+            })
+        }
+    }
+
+    async function checkPassword() {
+        if (password === '') {
+            setPasswordMessage('')
+            return
+        }
+
+        const data = {
+            'data': password
+        }
+
+        const url =  getUrl('/api/accounts/validate/password/')
+        try {
+            const response = await axios.post(url, data)
+            setPasswordMessage('')
+            setFormValidateChecker({
+                ...formValidateChecker,
+                'password': true
+            })
+
+        } catch (error) {
+            setPasswordMessage(error.response.data.error)
+            setFormValidateChecker({
+                ...formValidateChecker,
+                'password': false
+            })
+
+        }
+
+        checkPasswordCheck()
+    }
+
+    function checkPasswordCheck() {
+        if (passwordCheck === '') {
+            setPasswordCheckMessage('')
+            return
+        }
+
+        if (passwordCheck === password) {
+            setPasswordCheckMessage('')
+            setFormValidateChecker({
+                ...formValidateChecker,
+                'passwordCheck': true
+            })
+
+        } else {
+            setPasswordCheckMessage('비밀번호가 일치하지 않습니다.')
+            setFormValidateChecker({
+                ...formValidateChecker,
+                'passwordCheck': false
+            })
+        }
+    }
+
+    async function checkEmail() {
+        if (email === '') {
+            setEmailCheckMessage('')
+            return
+        }
+
+        const data = {
+            'data': email
+        }
+
+        const url =  getUrl('/api/accounts/validate/email/')
+        try {
+            const response = await axios.post(url, data)
+            setEmailCheckMessage('')
+            setFormValidateChecker({
+                ...formValidateChecker,
+                'email': true
+            })
+
+        } catch (error) {
+            console.error('error in check email:', error.response.data.error);
+            setEmailCheckMessage(error.response.data.error)
+            setFormValidateChecker({
+                ...formValidateChecker,
+                'email': false
+            })
+        }
     }
 
     return (
@@ -78,10 +192,11 @@ const SignupForm = () => {
                     type="text"
                     placeholder="아이디를 입력해주세요"
                     value={username}
-                    onChange={(e) => checkUserName(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value)}
+                    onBlur={checkUserName}
                     required
                 />
-                <p>아미 존재하는 아이디입니다.</p>
+                <p>{usernameMessage}</p>
 
                 <h4 className="inputName">비밀번호</h4>
                 <input
@@ -89,8 +204,10 @@ const SignupForm = () => {
                     placeholder="비밀번호를 입력해주세요"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onBlur={checkPassword}
                     required
                 />
+                <p>{passwordMessage}</p>
 
                 <h4 className="inputName">비밀번호 재확인</h4>
                 <input
@@ -98,8 +215,10 @@ const SignupForm = () => {
                     placeholder="비밀번호를 입력해주세요"
                     value={passwordCheck}
                     onChange={(e) => setPasswordCheck(e.target.value)}
+                    onBlur={checkPasswordCheck}
                     required
                 />
+                <p>{passwordCheckMessage}</p>
 
                 {/* ======================
                     이메일 추가 시 인터페이스 적용
@@ -110,8 +229,10 @@ const SignupForm = () => {
                     placeholder="이메일주소를 입력해주세요"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onBlur={checkEmail}
                     required
                 />
+                <p>{emailCheckMessage}</p>
 
                 <h4 className="inputName">자기소개</h4>
                 <textarea
