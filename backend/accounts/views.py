@@ -8,7 +8,6 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from accounts.permissions import CustomPermission
 
-
 class AccountAPIView(APIView):
     permission_classes = [CustomPermission]
 
