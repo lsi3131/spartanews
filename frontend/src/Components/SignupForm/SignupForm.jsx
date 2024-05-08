@@ -1,6 +1,8 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import axios from 'axios'
 import {useNavigate} from "react-router-dom"
+import useDebounce from "./useDebounce";
+import {asyncLogin} from "./Login"
 
 import './SignupForm.css'
 
@@ -14,6 +16,44 @@ const SignupForm = () => {
     const [passwordMessage, setPasswordMessage] = React.useState('');
     const [passwordCheckMessage, setPasswordCheckMessage] = React.useState('');
     const [emailCheckMessage, setEmailCheckMessage] = React.useState('');
+
+    const debounceUsername = useDebounce(username, 250);
+    const debouncePassword = useDebounce(password, 250);
+    const debouncePasswordCheck = useDebounce(passwordCheck, 250);
+    const debounceEmail = useDebounce(email, 250);
+
+    useEffect(() => {
+        // console.log(`debounce name=${debounceUsername}, name=${username}`)
+        if (debounceUsername === username) {
+            checkUserName().then(r => {
+            })
+        }
+    }, [debounceUsername, username]);
+
+    useEffect(() => {
+        // console.log(`debounce pw=${debouncePassword}, password=${password}`)
+        if (debouncePassword === password) {
+            checkPassword().then(r => {
+            })
+        }
+    }, [debouncePassword, password]);
+
+    useEffect(() => {
+        // console.log(`debounce pw=${debouncePasswordCheck}, pw check=${passwordCheck}`)
+        if (debouncePasswordCheck === passwordCheck) {
+            checkPasswordCheck()
+        }
+    }, [debouncePasswordCheck, passwordCheck]);
+
+
+    useEffect(() => {
+        // console.log(`debounce email=${debounceEmail}, password=${email}`)
+        if (debounceEmail === email) {
+            checkEmail().then(r => {
+            })
+        }
+    }, [debounceEmail, email]);
+
 
     // 제출용 데이터 정보. username, email, password가 입력이 되어 있어야 제출 가능
     const [formValidateChecker, setFormValidateChecker] = React.useState({
@@ -61,15 +101,18 @@ const SignupForm = () => {
             introduce: introduce
         };
 
-        const url =  getUrl('/api/accounts/')
+        const url = getUrl('/api/accounts/')
         try {
             const response = await axios.post(url, data)
             console.log('Signup successful:', response.data);
-            navigate('/login');
+            await asyncLogin(username, password)
+
+            // navigate('/login');
         } catch (error) {
             console.error('Error during signup:', error.response.data.error);
         }
     }
+
 
     async function checkUserName() {
         if (username === '') {
@@ -81,7 +124,7 @@ const SignupForm = () => {
             'data': username
         }
 
-        const url =  getUrl('/api/accounts/validate/username/')
+        const url = getUrl('/api/accounts/validate/username/')
         try {
             const response = await axios.post(url, data)
             setUsernameMessage('')
@@ -108,7 +151,7 @@ const SignupForm = () => {
             'data': password
         }
 
-        const url =  getUrl('/api/accounts/validate/password/')
+        const url = getUrl('/api/accounts/validate/password/')
         try {
             const response = await axios.post(url, data)
             setPasswordMessage('')
@@ -161,7 +204,7 @@ const SignupForm = () => {
             'data': email
         }
 
-        const url =  getUrl('/api/accounts/validate/email/')
+        const url = getUrl('/api/accounts/validate/email/')
         try {
             const response = await axios.post(url, data)
             setEmailCheckMessage('')
@@ -183,54 +226,57 @@ const SignupForm = () => {
     return (
         <div className="signup-content">
             <div className="signup-wrapper">
-                <h4 className="inputName">아이디</h4>
+                <div className="input-title">
+                    <h4 className="inputName">아이디</h4>
+                    <p className="error-message">{usernameMessage}</p>
+                </div>
                 <input
                     type="text"
                     placeholder="아이디를 입력해주세요"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    onBlur={checkUserName}
                     required
                 />
-                <p className="error-message">{usernameMessage}</p>
 
-                <h4 className="inputName">비밀번호</h4>
+                <div className="input-title">
+                    <h4 className="inputName">비밀번호</h4>
+                    <p className="error-message">{passwordMessage}</p>
+                </div>
                 <input
                     type="password"
                     placeholder="비밀번호를 입력해주세요"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    onBlur={checkPassword}
                     required
                 />
-                <p className="error-message">{passwordMessage}</p>
 
-                <h4 className="inputName">비밀번호 재확인</h4>
+                <div className="input-title">
+                    <h4 className="inputName">비밀번호 재확인</h4>
+                    <p className="error-message">{passwordCheckMessage}</p>
+                </div>
                 <input
                     type="password"
                     placeholder="비밀번호를 입력해주세요"
                     value={passwordCheck}
                     onChange={(e) => setPasswordCheck(e.target.value)}
-                    onBlur={checkPasswordCheck}
                     required
                 />
-                <p className="error-message">{passwordCheckMessage}</p>
 
-                {/* ======================
-                    이메일 추가 시 인터페이스 적용
-                ==========================*/}
-                <h4 className="inputName">이메일</h4>
+                <div className="input-title">
+                    <h4 className="inputName">이메일</h4>
+                    <p className="error-message">{emailCheckMessage}</p>
+                </div>
                 <input
                     type="text"
                     placeholder="이메일주소를 입력해주세요"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    onBlur={checkEmail}
                     required
                 />
-                <p className="error-message">{emailCheckMessage}</p>
 
-                <h4 className="inputName">자기소개</h4>
+                <div className="input-title">
+                    <h4 className="inputName">자기소개</h4>
+                </div>
                 <textarea
                     className="signup-textarea"
                     placeholder="소개글을 입력해주세요"
