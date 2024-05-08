@@ -49,9 +49,7 @@ export default function WriteForm() {
                             }
                         }}
                     >
-                        <option value="news" selected={true}>
-                            News
-                        </option>
+                        <option defaultValue="news">News</option>
                         <option value="ask">Ask</option>
                         <option value="show">Show</option>
                     </select>
