@@ -2,9 +2,12 @@ from django.shortcuts import get_list_or_404, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly,IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
+# Create your views here.
+
 from .models import Article, Comment
-from .article_validate import validate_article_data
+from .article_validate import validate_article_data, validate_comment_data
 from django.db.models import Count
 
 
@@ -14,18 +17,22 @@ class ArticleAPIView(APIView):
 
     def get(self, request):
         articles = get_list_or_404(Article)
-        return Response([{
+        pageination = PageNumberPagination()
+        data =[{
             "id": article.id,
             "title": article.title,
+            "content": article.content,
             "article_type": article.article_type,
             "article_link": article.article_link,
             "author": article.author.username,
             "created_at": article.created_at,
             "comment_count": article.comments.count(),
             "likey_count": article.likey.count(),
-        } for article in articles])
-        
-    
+        } for article in articles]
+        pageination.paginate_queryset(data,request)
+        return pageination.get_paginated_response(data)
+
+
     def post(self, request):
         data = request.data.copy()
         message = validate_article_data(data)
@@ -166,6 +173,7 @@ class ArticleLineUpAPIView(APIView):
             {
             "id": article.id,
             "title": article.title,
+            "content": article.content,
             "article_type": article.article_type,
             "article_link": article.article_link,
             "author": article.author.username,
@@ -176,3 +184,99 @@ class ArticleLineUpAPIView(APIView):
             for article in articles
         ])
     
+
+class ArticleCommentsAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get(self, request, article_pk):
+        article = get_object_or_404(Article, id=article_pk)
+        comments = article.comments.all()
+
+        response_data = []
+        for comment in comments:
+            recommend = [r.id for r in comment.recommend.all()]
+            response_data.append(
+                {
+                    "id": comment.id,
+                    "article": comment.article.id,
+                    "author": comment.author.username,
+                    "parent_comment_id": comment.parent_comment_id,
+                    "content": comment.content,
+                    "recommend": recommend,
+                    "created_at": comment.created_at,
+                    "updated_at": comment.updated_at,
+                }
+            )
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    def post(self, request, article_pk):
+        data = request.data.copy()
+        message = validate_comment_data(data)
+        if message:
+            return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+        content = data['content']
+        parent_comment_id = data.get('parent_comment_id', None)
+        parent_comment = None
+        if parent_comment_id:
+            parent_comment = get_object_or_404(Comment, id=parent_comment_id)
+        article = get_object_or_404(Article, id=article_pk)
+
+        Comment.objects.create(content=content, article=article, author=request.user, parent_comment=parent_comment)
+        return Response(
+            {"message": "댓글이 작성되었습니다."},
+            status=status.HTTP_201_CREATED
+        )
+
+
+class CommentDetailAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get(self, request, article_pk, comment_pk):
+        comment = get_object_or_404(Comment, id=comment_pk)
+
+        parent_comment_id = comment.parent_comment.id if comment.parent_comment else None
+        recommend = [r.id for r in comment.recommend.all()]
+        return Response({
+            "id": comment.id,
+            "article": comment.article.id,
+            "parent_comment": parent_comment_id,
+            "content": comment.content,
+            "recommend": recommend,
+            "created_at": comment.created_at,
+            "updated_at": comment.updated_at,
+        }, status=status.HTTP_200_OK)
+
+    def put(self, request, article_pk, comment_pk):
+        comment = get_object_or_404(Comment, id=comment_pk)
+        if comment.author != request.user:
+            return Response(
+                {"error": "작성자만 수정할 수 있습니다."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        data = request.data.copy()
+        data["content"] = data.get("content", comment.content)
+        message = validate_comment_data(data)
+        if message:
+            return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+        comment.__dict__.update(**data)
+        comment.save()
+        return Response(
+            {"message": "댓글이 수정되었습니다."},
+            status=status.HTTP_200_OK
+        )
+
+    def delete(self, request, article_pk, comment_pk):
+        comment = get_object_or_404(Comment, id=comment_pk)
+        if comment.author != request.user:
+            return Response(
+                {"error": "작성자만 삭제할 수 있습니다."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        comment.delete()
+        return Response(
+        {"message": "댓글이 삭제되었습니다."},
+        status=status.HTTP_204_NO_CONTENT
+    )
