@@ -1,14 +1,14 @@
 import './App.css'
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+// import 'bootstrap/dist/css/bootstrap.min.css'
+// import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
 import { useState, useEffect } from 'react'
 
 import Navbar from './Components/Navbar/Navbar'
 import LoginForm from './Components/LoginForm/LoginForm'
 import HomeForm from './Components/HomeForm/HomeForm'
-import SignupForm from "./Components/SignupForm/SignupForm";
+import SignupForm from './Components/SignupForm/SignupForm'
 import WriteForm from './Components/WriteForm/WriteForm'
 
 import fetchUser from './fetchUser'
@@ -46,6 +46,10 @@ function App() {
                 <Route
                     path="/login"
                     element={<AnonymouseRoute authenticated={authenticated} component={LoginForm} />}
+                />
+                <Route
+                    path="/signup"
+                    element={<AnonymouseRoute authenticated={authenticated} component={SignupForm} />}
                 />
             </Routes>
         </>

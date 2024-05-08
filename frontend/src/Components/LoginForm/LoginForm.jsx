@@ -4,7 +4,7 @@ import { FaUser } from 'react-icons/fa6'
 import { MdLock } from 'react-icons/md'
 import axios from 'axios'
 import './LoginForm.css'
-import {Link} from "react-router-dom";
+import { Link } from 'react-router-dom'
 
 const LoginForm = () => {
     const [username, setUsername] = React.useState('')
