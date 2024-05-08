@@ -196,7 +196,7 @@ const SignupForm = () => {
                     onBlur={checkUserName}
                     required
                 />
-                <p>{usernameMessage}</p>
+                <p className="error-message">{usernameMessage}</p>
 
                 <h4 className="inputName">비밀번호</h4>
                 <input
@@ -207,7 +207,7 @@ const SignupForm = () => {
                     onBlur={checkPassword}
                     required
                 />
-                <p>{passwordMessage}</p>
+                <p className="error-message">{passwordMessage}</p>
 
                 <h4 className="inputName">비밀번호 재확인</h4>
                 <input
@@ -218,7 +218,7 @@ const SignupForm = () => {
                     onBlur={checkPasswordCheck}
                     required
                 />
-                <p>{passwordCheckMessage}</p>
+                <p className="error-message">{passwordCheckMessage}</p>
 
                 {/* ======================
                     이메일 추가 시 인터페이스 적용
@@ -232,7 +232,7 @@ const SignupForm = () => {
                     onBlur={checkEmail}
                     required
                 />
-                <p>{emailCheckMessage}</p>
+                <p className="error-message">{emailCheckMessage}</p>
 
                 <h4 className="inputName">자기소개</h4>
                 <textarea
