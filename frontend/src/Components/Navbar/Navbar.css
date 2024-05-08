@@ -29,8 +29,5 @@
 
 .navbar a:hover {
     color: #0000002c;
-}
-
-.navbar a:focus {
-    color: #f80000b2;
+    cursor: pointer;
 }

@@ -18,6 +18,7 @@ class ArticleAPIView(APIView):
     def get(self, request):
         articles = get_list_or_404(Article)
         pageination = PageNumberPagination()
+        page_articles=pageination.paginate_queryset(articles,request)
         data =[{
             "id": article.id,
             "title": article.title,
@@ -28,8 +29,7 @@ class ArticleAPIView(APIView):
             "created_at": article.created_at,
             "comment_count": article.comments.count(),
             "likey_count": article.likey.count(),
-        } for article in articles]
-        pageination.paginate_queryset(data,request)
+        } for article in page_articles]
         return pageination.get_paginated_response(data)
 
 
@@ -115,10 +115,10 @@ class LikeyArticleAPIView(APIView):
         user = request.user.id
         
         if article.likey.filter(pk=user).exists():
-            return Response({'message': ''' '좋아요 취소'를 눌러주세요 '''}, status=400)
+            return Response({'message': ''' '좋아요 취소'를 눌러주세요 '''}, status=status.HTTP_400_BAD_REQUEST)
         
         article.likey.add(user)
-        return Response({'message': '좋아요'},status=200)
+        return Response({'message': '좋아요'},status=status.HTTP_200_OK)
         
 
     def delete(self, request, article_pk):
@@ -126,23 +126,23 @@ class LikeyArticleAPIView(APIView):
         user = request.user.id
 
         if not article.likey.filter(pk=user):
-            return Response({'message': ''' '좋아요'를 눌러주세요. '''})
+            return Response({'message': ''' '좋아요'를 눌러주세요. '''},status=status.HTTP_400_BAD_REQUEST)
         
         article.likey.remove(user)
-        return Response({'message': '좋아요 취소'},status=200)
-
-
+        return Response({'message': '좋아요 취소'},status=status.HTTP_200_OK)
 
 class RecommendAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, article_pk,comment_pk ):
         comment = get_object_or_404(Comment, pk=comment_pk)
         user = request.user.id
 
         if comment.recommend.filter(pk=user).exists():
-            return Response({'message':''' '추천 취소'를 눌러주세요 '''})
+            return Response({'message':''' '추천 취소'를 눌러주세요 '''},status=status.HTTP_400_BAD_REQUEST)
         
         comment.recommend.add(user)
-        return Response({'message': '추천'})
+        return Response({'message': '추천'},status=status.HTTP_200_OK)
 
 
     def delete(self, request, article_pk,comment_pk ):
@@ -150,10 +150,10 @@ class RecommendAPIView(APIView):
         user = request.user.id
         
         if not comment.recommend.filter(pk=user):
-            return Response({'message':''' '추천'을 눌러주세요 '''})
+            return Response({'message':''' '추천'을 눌러주세요 '''},status=status.HTTP_400_BAD_REQUEST)
 
         comment.recommend.remove(user)
-        return Response({'message': '추천 취소'})
+        return Response({'message': '추천 취소'},status=status.HTTP_200_OK)
 
 
 class ArticleLineUpAPIView(APIView):

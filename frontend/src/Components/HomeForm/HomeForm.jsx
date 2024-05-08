@@ -21,8 +21,7 @@ const HomeForm = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get('http://127.0.0.1:8000/api/articles/')
-                setArticles(response.data)
-                console.log(response.data)
+                setArticles(response.data.results)
                 setLoading(false)
             } catch (error) {
                 setError('데이터를 불러오는데 실패했습니다.')
@@ -31,7 +30,7 @@ const HomeForm = () => {
         }
 
         fetchData()
-    }, [])
+    }, []) // 빈 배열을 전달하여 초기 렌더링 시에만 실행되도록 함
 
     if (loading) {
         return <div>Loading...</div>

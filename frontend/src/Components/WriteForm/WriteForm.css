@@ -16,25 +16,28 @@
 
 .inputName {
     position: relative;
-    margin-top: 15px;
-    margin-bottom: 10px;
     color: gray;
+    margin-top: 10px;
     font-weight: bold;
 }
 
-.write-wrapper > input,
+.write-wrapper input,
 select {
     height: 40px;
     border-radius: 40px;
+    margin-top: 10px;
+    margin-bottom: 15px;
 }
 
-.write-wrapper > textarea {
+.write-wrapper textarea {
+    margin-top: 5px;
+    margin-bottom: 10px;
     height: 150px;
     border-radius: 20px;
     padding-top: 20px;
 }
 
-.write-wrapper > input,
+.write-wrapper input,
 select,
 textarea {
     width: 100%;
@@ -45,13 +48,13 @@ textarea {
     border: 2px solid #00000029;
 }
 
-.write-wrapper > input:focus,
+.write-wrapper input:focus,
 select:focus,
 textarea:focus {
     border-color: gray;
 }
 
-.write-wrapper > button {
+.write-wrapper button {
     width: 100%;
     margin-top: 20px;
     height: 40px;
