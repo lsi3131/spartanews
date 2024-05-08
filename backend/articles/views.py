@@ -18,6 +18,7 @@ class ArticleAPIView(APIView):
     def get(self, request):
         articles = get_list_or_404(Article)
         pageination = PageNumberPagination()
+        page_articles=pageination.paginate_queryset(articles,request)
         data =[{
             "id": article.id,
             "title": article.title,
@@ -27,8 +28,7 @@ class ArticleAPIView(APIView):
             "created_at": article.created_at,
             "comment_count": article.comments.count(),
             "likey_count": article.likey.count(),
-        } for article in articles]
-        pageination.paginate_queryset(data,request)
+        } for article in page_articles]
         return pageination.get_paginated_response(data)
 
 
