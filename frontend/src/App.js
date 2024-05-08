@@ -15,9 +15,13 @@ import DetailArticleForm from './Components/DetailArticleForm/DetailArticleForm'
 import fetchUser from './fetchUser'
 import AuthenticatedRoute from './AuthenticatedRoute'
 import AnonymouseRoute from './AnonymouseRoute'
+import ProfileForm from './Components/ProfileForm/ProfileForm'
+
+import { jwtDecode } from 'jwt-decode'
 
 function App() {
     const navigate = useNavigate()
+    const [userInfos, setUserInfos] = useState([{}])
     const [authenticated, setAuthenticated] = useState(false)
 
     const checkAuthentication = async () => {
@@ -32,12 +36,16 @@ function App() {
         checkAuthentication()
         if (!authenticated) {
             navigate(window.location.pathname, { replace: true })
+        } else {
+            const token = localStorage.getItem('accessToken')
+            const decoded = jwtDecode(token)
+            setUserInfos(decoded)
         }
     }, [navigate, authenticated]) // navigate를 의존성 배열에 추가
 
     return (
         <>
-            <Navbar authenticated={authenticated} />
+            <Navbar username={userInfos.username} />
             <Routes>
                 <Route path="/" element={<HomeForm />} />
                 <Route
@@ -56,6 +64,7 @@ function App() {
                     path="/detail/:articleId" element={<DetailArticleForm/>}
                 />
 
+                <Route path="/profile/:name" element={<ProfileForm username={userInfos.username} />} />
             </Routes>
         </>
     )
