@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import axios from 'axios'
 
 import './HomeForm.css'
+import {Link, Route} from "react-router-dom";
 
 const extractDomain = (url) => {
     const domainPattern = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/im
@@ -47,11 +48,9 @@ const HomeForm = () => {
                     {articles.map((article) => (
                         <div key={article.id} className="article">
                             <h2>
-                                {article.article_link ? (
-                                    <a href={article.article_link}>{article.title}</a>
-                                ) : (
-                                    article.title
-                                )}
+                                <Link to={`/detail/${article.id}`}>
+                                    <p>{article.title}</p>
+                                </Link>
                             </h2>
                             <span className="domain-name">({extractDomain(article.article_link)})</span>
                             <p>{article.content}</p>

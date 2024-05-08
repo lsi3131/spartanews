@@ -10,6 +10,7 @@ import LoginForm from './Components/LoginForm/LoginForm'
 import HomeForm from './Components/HomeForm/HomeForm'
 import SignupForm from './Components/SignupForm/SignupForm'
 import WriteForm from './Components/WriteForm/WriteForm'
+import DetailArticleForm from './Components/DetailArticleForm/DetailArticleForm'
 
 import fetchUser from './fetchUser'
 import AuthenticatedRoute from './AuthenticatedRoute'
@@ -59,6 +60,10 @@ function App() {
                     path="/signup"
                     element={<AnonymouseRoute authenticated={authenticated} component={SignupForm} />}
                 />
+                <Route
+                    path="/detail/:articleId" element={<DetailArticleForm/>}
+                />
+
                 <Route path="/profile/:name" element={<ProfileForm username={userInfos.username} />} />
             </Routes>
         </>
