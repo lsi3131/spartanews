@@ -1,0 +1,35 @@
+.comments-input {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.comment {
+    display: flex;
+    justify-content: space-between;
+    /*justify-content: left;*/
+    /*align-items: center;*/
+}
+
+.comment-author {
+    margin-right: 10px;
+}
+
+.comment-buttons-container {
+    display: flex;
+    /*justify-content: flex-end;*/
+}
+
+.comment-root {
+    display: flex;
+}
+
+.comment-bottom button{
+  width: auto;
+  text-align: left;
+}
+
+.comment-add {
+    display: flex;
+    margin-left: 40px;
+}
