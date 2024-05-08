@@ -61,11 +61,26 @@ const SignupForm = () => {
             introduce: introduce
         };
 
-        const url =  getUrl('/api/accounts/')
+        const url = getUrl('/api/accounts/')
         try {
             const response = await axios.post(url, data)
             console.log('Signup successful:', response.data);
-            navigate('/login');
+
+            try {
+                const response = await axios.post('http://127.0.0.1:8000/api/login/', {
+                    username: username,
+                    password: password,
+                })
+                const {access, refresh} = response.data
+                localStorage.setItem('accessToken', access)
+                localStorage.setItem('refreshToken', refresh)
+                window.location.href = '/' // 혹은 메인 화면으로
+            } catch (error) {
+                console.error('로그인 오류:', error)
+                // 오류 처리 로직을 추가할 수 있습니다.
+            }
+
+            // navigate('/login');
         } catch (error) {
             console.error('Error during signup:', error.response.data.error);
         }
@@ -81,7 +96,7 @@ const SignupForm = () => {
             'data': username
         }
 
-        const url =  getUrl('/api/accounts/validate/username/')
+        const url = getUrl('/api/accounts/validate/username/')
         try {
             const response = await axios.post(url, data)
             setUsernameMessage('')
@@ -108,7 +123,7 @@ const SignupForm = () => {
             'data': password
         }
 
-        const url =  getUrl('/api/accounts/validate/password/')
+        const url = getUrl('/api/accounts/validate/password/')
         try {
             const response = await axios.post(url, data)
             setPasswordMessage('')
@@ -161,7 +176,7 @@ const SignupForm = () => {
             'data': email
         }
 
-        const url =  getUrl('/api/accounts/validate/email/')
+        const url = getUrl('/api/accounts/validate/email/')
         try {
             const response = await axios.post(url, data)
             setEmailCheckMessage('')
