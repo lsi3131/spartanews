@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import HttpRequest
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -7,6 +8,11 @@ from django.shortcuts import get_object_or_404
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from accounts.permissions import CustomPermission
+from .util import AccountValidator
+import re
+
+validator = AccountValidator()
+
 
 class AccountAPIView(APIView):
     permission_classes = [CustomPermission]
@@ -16,20 +22,32 @@ class AccountAPIView(APIView):
         회원가입(권한 : 모든 유저)
         """
         data = request.data
-        username = data.get('username')
+        username = data.get('username', None)
+        password = data.get('password', None)
+        email = data.get('email', None)
+        introduce = data.get('introduce', '')
 
-        # 유저명 글자 수 제한 (5자 ~ 15자 가능)
-        if (len(username) < 5) or (len(username) > 15):
-            return Response({"error": "유저명은 5자 이상, 15자 이하입니다."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # 이미 가입한 유저명 제한
-        if get_user_model().objects.filter(username=username).exists():
-            return Response({"error": "이미 가입한 계정입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        # username, password, email 권한 설정
+        validate_type_values = {
+            'username': username,
+            'password': password,
+            'email': email,
+        }
+        for v_type, value in validate_type_values.items():
+            request_data = {'data': value}
+            if not validator.validate(v_type, request_data):
+                return validator.get_response_data()
 
         # 유저 등록
         get_user_model().objects.create_user(
-            username=username, password=data.get("password"))
-        return Response({"username": username}, status=status.HTTP_201_CREATED)
+            username=username, password=password, email=email, introduce=introduce)
+
+        return Response({
+            "username": username,
+            "password": password,
+            "email": email,
+            "introduce": introduce,
+        }, status=status.HTTP_201_CREATED)
 
     def put(self, request):
         """
@@ -39,7 +57,7 @@ class AccountAPIView(APIView):
         pk = request.user.pk
         # 로그인한 user의 db가져오기
         user = get_object_or_404(get_user_model(), pk=pk)
-        
+
         # 변경요청 데이터 가져오기
         introduce = request.data.get("introduce")
         email = request.data.get("email")
@@ -48,11 +66,11 @@ class AccountAPIView(APIView):
             validate_email(email)
         except ValidationError:
             print("유효하지 않은 이메일 주소입니다.")
-        
+
         user.introduce = introduce
         user.email = email
         user.save()
-        return Response({"introduce":introduce, "email":email})
+        return Response({"introduce": introduce, "email": email})
 
     def delete(self, request):
         """
@@ -61,14 +79,14 @@ class AccountAPIView(APIView):
         login_user_pk = request.user.pk
         user = get_object_or_404(get_user_model(), pk=login_user_pk)
         user.delete()
-        return Response({"message":"회원탈퇴가 정상적으로 처리되었습니다."})
+        return Response({"message": "회원탈퇴가 정상적으로 처리되었습니다."})
+
 
 @api_view(['GET'])
 def profile(request, username):
     """
     프로필 조회(권한 : 없음)
     """
-    print(request.user)
     user = get_object_or_404(get_user_model(), username=username)
     return Response({
         "username": user.username,
@@ -77,3 +95,21 @@ def profile(request, username):
         "introduce": user.introduce,
         "email": user.email
     })
+
+
+@api_view(['POST'])
+def validate_password(request):
+    validator.validate('password', request.data)
+    return validator.get_response_data()
+
+
+@api_view(['POST'])
+def validate_username(request):
+    validator.validate('username', request.data)
+    return validator.get_response_data()
+
+
+@api_view(['POST'])
+def validate_email(request):
+    validator.validate('email', request.data)
+    return validator.get_response_data()
