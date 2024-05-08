@@ -18,6 +18,7 @@
     position: relative;
     margin-top: 15px;
     margin-bottom: 10px;
+    margin-right: 20px;
     color: gray;
     font-weight: bold;
 }
@@ -65,4 +66,9 @@ textarea:focus {
 
 .error-message {
     color: red;
+}
+
+.input-title {
+    display: flex;
+    align-items: center;
 }
