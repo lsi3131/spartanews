@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './WriteForm.css'
 
@@ -35,41 +35,59 @@ export default function WriteForm() {
     return (
         <div className="write-content">
             <div className="write-wrapper">
-                <h4 className="inputName">타입</h4>
-                <select name="category" value={articleType} onChange={(e) => setArticleType(e.target.value)}>
-                    <option value="news">뉴스</option>
-                    <option value="ask">Ask</option>
-                    <option value="show">Show</option>
-                </select>
+                <div className="inputName">
+                    타입
+                    <select
+                        name="category"
+                        value={articleType}
+                        onChange={(e) => {
+                            setArticleType(e.target.value)
+                            if (e.target.value === 'ask') {
+                                document.querySelector('.linkInput').style.display = 'none'
+                            } else {
+                                document.querySelector('.linkInput').style.display = 'block'
+                            }
+                        }}
+                    >
+                        <option value="news" selected={true}>
+                            News
+                        </option>
+                        <option value="ask">Ask</option>
+                        <option value="show">Show</option>
+                    </select>
+                </div>
 
-                <h4 className="inputName">제목</h4>
+                <div className="inputName">
+                    제목
+                    <input
+                        type="text"
+                        name="userid"
+                        placeholder="제목을 적어주세요"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                    />
+                </div>
 
-                <input
-                    type="text"
-                    name="userid"
-                    placeholder="제목을 적어주세요"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
+                <div className="inputName linkInput">
+                    링크
+                    <input
+                        type="url"
+                        name="userid"
+                        placeholder="URL 주소를 적어주세요"
+                        value={articleLink}
+                        onChange={(e) => setArticleLink(e.target.value)}
+                    />
+                </div>
 
-                <h4 className="inputName">링크</h4>
-
-                <input
-                    type="url"
-                    name="userid"
-                    placeholder="URL 주소를 적어주세요"
-                    value={articleLink}
-                    onChange={(e) => setArticleLink(e.target.value)}
-                />
-
-                <h4 className="inputName">내용</h4>
-
-                <textarea
-                    name="userid"
-                    placeholder="간단하게 내용을 적어주세요"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                />
+                <div className="inputName">
+                    내용
+                    <textarea
+                        name="userid"
+                        placeholder="간단하게 내용을 적어주세요"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                    />
+                </div>
 
                 <button onClick={register}>등록</button>
             </div>

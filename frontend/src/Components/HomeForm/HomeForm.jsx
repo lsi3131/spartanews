@@ -31,7 +31,7 @@ const HomeForm = () => {
         }
 
         fetchData()
-    }, [])
+    }, []) // 빈 배열을 전달하여 초기 렌더링 시에만 실행되도록 함
 
     if (loading) {
         return <div>Loading...</div>
