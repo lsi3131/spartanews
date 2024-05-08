@@ -8,11 +8,11 @@ class AccountValidator:
     def __init__(self):
         self.response_data = Response({"valid": True}, status=status.HTTP_200_OK)
 
-    def validate(self, validate_type: str, request) -> bool:
+    def validate(self, validate_type: str, request_data) -> bool:
         self.response_data = Response({"valid": True}, status=status.HTTP_200_OK)
-        data = request.data.get('data', None)
+        data = request_data.get('data', None)
         if not data:
-            self.response_data = {"error": "올바르지 않은 데이터 포맷입니다."}
+            self.response_data = Response({"error": "올바르지 않은 데이터 포맷입니다."}, status=status.HTTP_400_BAD_REQUEST)
             return False
 
         if validate_type == 'password':
@@ -53,7 +53,6 @@ class AccountValidator:
             pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
             return re.match(pattern, email) is not None
 
-        # 글자수 5~15
         if not is_valid_email(email):
             self.response_data = Response({"error": "올바르지 않은 이메일 주소입니다."}, status=status.HTTP_400_BAD_REQUEST)
             return False

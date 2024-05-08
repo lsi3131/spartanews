@@ -41,19 +41,15 @@ const SignupForm = () => {
         }
 
         if (formValidateChecker.username === false) {
-            //user로 페이징
             console.log('invalid username');
             return
         } else if (formValidateChecker.email === false) {
-            //이메일로 페이징
             console.log('invalid email');
             return
         } else if (formValidateChecker.password === false) {
-            //비밀번호로 페이징
             console.log('invalid password');
             return
         } else if (formValidateChecker.passwordCheck === false) {
-            //비밀번호 체크로 페이징
             console.log('invalid password check');
             return
         }

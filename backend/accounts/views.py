@@ -22,20 +22,32 @@ class AccountAPIView(APIView):
         회원가입(권한 : 모든 유저)
         """
         data = request.data
-        username = data.get('username')
+        username = data.get('username', None)
+        password = data.get('password', None)
+        email = data.get('email', None)
+        introduce = data.get('introduce', '')
 
-        # 유저명 글자 수 제한 (5자 ~ 15자 가능)
-        if (len(username) < 5) or (len(username) > 15):
-            return Response({"error": "유저명은 5자 이상, 15자 이하입니다."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # 이미 가입한 유저명 제한
-        if get_user_model().objects.filter(username=username).exists():
-            return Response({"error": "이미 가입한 계정입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        # username, password, email 권한 설정
+        validate_type_values = {
+            'username': username,
+            'password': password,
+            'email': email,
+        }
+        for v_type, value in validate_type_values.items():
+            request_data = {'data': value}
+            if not validator.validate(v_type, request_data):
+                return validator.get_response_data()
 
         # 유저 등록
         get_user_model().objects.create_user(
-            username=username, password=data.get("password"))
-        return Response({"username": username}, status=status.HTTP_201_CREATED)
+            username=username, password=password, email=email, introduce=introduce)
+
+        return Response({
+            "username": username,
+            "password": password,
+            "email": email,
+            "introduce": introduce,
+        }, status=status.HTTP_201_CREATED)
 
     def put(self, request):
         """
@@ -88,17 +100,17 @@ def profile(request, username):
 
 @api_view(['POST'])
 def validate_password(request):
-    validator.validate('password', request)
+    validator.validate('password', request.data)
     return validator.get_response_data()
 
 
 @api_view(['POST'])
 def validate_username(request):
-    validator.validate('username', request)
+    validator.validate('username', request.data)
     return validator.get_response_data()
 
 
 @api_view(['POST'])
 def validate_email(request):
-    validator.validate('email', request)
+    validator.validate('email', request.data)
     return validator.get_response_data()
