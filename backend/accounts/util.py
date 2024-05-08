@@ -27,9 +27,29 @@ class AccountValidator:
             return False
 
     def validate_password(self, password: str) -> bool:
-        # 글자수 4 이상
-        if not (4 <= len(password)):
-            self.response_data = Response({"error": "비밀번호는 4자리 이상이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+        # 글자수 8 이상
+        if not (8 <= len(password)):
+            self.response_data = Response({"error": "비밀번호는 8자리 이상이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+            return False
+
+        # 대문자 포함
+        if not re.search(r"[A-Z]", password):
+            self.response_data = Response({"error": "비밀번호에는 대문자가 포함되어야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
+            return False
+
+        # 소문자 포함
+        if not re.search(r"[a-z]", password):
+            self.response_data = Response({"error": "비밀번호에는 소문자가 포함되어야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
+            return False
+
+        # 숫자 포함
+        if not re.search(r"\d", password):
+            self.response_data = Response({"error": "비밀번호에는 숫자가 포함되어야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
+            return False
+
+        # 특수문자 포함
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+            self.response_data = Response({"error": "비밀번호에는 특수문자가 포함되어야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
             return False
 
         return True
