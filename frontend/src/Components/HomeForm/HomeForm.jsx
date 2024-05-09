@@ -56,8 +56,8 @@ const HomeForm = () => {
                 {},
                 { headers: { Authorization: `Bearer ${accessToken}` } },
             )
-            const updatedResponse = await axios.get('http://127.0.0.1:8000/api/articles/')
-            setArticles(updatedResponse.data.results)
+            const Updateresponse = await axios.get(`http://127.0.0.1:8000/api/articles/?page=${currentPage}`)
+            setArticles(Updateresponse.data)
         } catch (error) {
             console.error('에러가 발생했습니다:', error)
         }
@@ -69,8 +69,8 @@ const HomeForm = () => {
             const response = await axios.delete(`http://127.0.0.1:8000/api/articles/${articleId}/likey/`, {
                 headers: { Authorization: `Bearer ${accessToken}` },
             })
-            const updatedResponse = await axios.get('http://127.0.0.1:8000/api/articles/')
-            setArticles(updatedResponse.data.results)
+            const Updateresponse = await axios.get(`http://127.0.0.1:8000/api/articles/?page=${currentPage}`)
+            setArticles(Updateresponse.data)
         } catch (error) {
             console.error('에러가 발생했습니다:', error)
         }
@@ -97,7 +97,7 @@ const HomeForm = () => {
         <div className="home-content">
             <div className="home-wrapper">
                 <div className="articles">
-                    {articles.results.map((article, index) => (
+                    {articles.results && articles.results.map((article, index) => (
                         <div key={article.id} className="article">
                             <div className="article-num">{index + 1 + (currentPage - 1) * articles.per_page}</div>
                             <div className="article-head">
@@ -116,23 +116,25 @@ const HomeForm = () => {
                                 <span className="domain-name">({extractDomain(article.article_link)})</span>
                             </div>
                             <div className="article-body">
-                                <a href="">
+                                <Link to={`/detail/${article.id}`}>
                                     {article.content.length < 30
                                         ? article.content
                                         : article.content.slice(0, 30) + '...'}
-                                </a>
+                                </Link>
                             </div>
                             <div className="article-bottom">
                                 <span> by {article.author} | </span>
                                 <span>{formatDate(article.created_at)} | </span>
                                 <span>Comments: {article.comment_count} | </span>
                                 <span>Likes: {article.likey_count}</span>
-                                {userId !== null &&
-                                    (article.likey_user_id.includes(userId) ? (
-                                        <button onClick={() => UnlikeButton(article.id)}>Unlike</button>
-                                    ) : (
-                                        <button onClick={() => likeButton(article.id)}>Like</button>
-                                    ))}
+                                <div className="article-button">
+                                    {userId !== null &&
+                                        (article.likey_user_id.includes(userId) ? (
+                                            <button onClick={() => UnlikeButton(article.id)}> like ♥</button>
+                                        ) : (
+                                            <button onClick={() => likeButton(article.id)}>Unlike ♡</button>
+                                        ))}
+                                </div>
                             </div>
                         </div>
                     ))}
