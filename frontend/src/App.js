@@ -58,11 +58,11 @@ function App() {
                 />
                 <Route
                     path="/ask"
-                    element={<AuthenticatedRoute authenticated={authenticated} component={AskForm} />}
+                    element={<AuthenticatedRoute authenticated={true} component={AskForm} />}
                 />
                 <Route
                     path="/Show"
-                    element={<AuthenticatedRoute authenticated={authenticated} component={ShowForm} />}
+                    element={<AuthenticatedRoute authenticated={true} component={ShowForm} />}
                 />
                 <Route
                     path="/login"
