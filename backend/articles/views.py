@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework.pagination import PageNumberPagination
+from .util import CustomPagination
 # Create your views here.
 
 from .models import Article, Comment
@@ -17,7 +17,7 @@ class ArticleAPIView(APIView):
 
     def get(self, request):
         articles = get_list_or_404(Article)
-        pageination = PageNumberPagination()
+        pageination = CustomPagination()
         page_articles=pageination.paginate_queryset(articles,request)
         data =[{
             "id": article.id,
