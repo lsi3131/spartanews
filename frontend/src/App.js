@@ -5,11 +5,14 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 
 import { useState, useEffect } from 'react'
 
+import Cursor from './Components/Cursor/Cursor'
 import Navbar from './Components/Navbar/Navbar'
 import LoginForm from './Components/LoginForm/LoginForm'
 import HomeForm from './Components/HomeForm/HomeForm'
 import SignupForm from './Components/SignupForm/SignupForm'
 import WriteForm from './Components/WriteForm/WriteForm'
+import AskForm from './Components/AskForm/AskForm'
+import ShowForm from './Components/ShowForm/ShowForm'
 import DetailArticleForm from './Components/DetailArticleForm/DetailArticleForm'
 
 import fetchUser from './fetchUser'
@@ -45,12 +48,21 @@ function App() {
 
     return (
         <>
+            <Cursor />
             <Navbar username={userInfos.username} />
             <Routes>
                 <Route path="/" element={<HomeForm />} />
                 <Route
                     path="/write"
                     element={<AuthenticatedRoute authenticated={authenticated} component={WriteForm} />}
+                />
+                <Route
+                    path="/ask"
+                    element={<AuthenticatedRoute authenticated={authenticated} component={AskForm} />}
+                />
+                <Route
+                    path="/Show"
+                    element={<AuthenticatedRoute authenticated={authenticated} component={ShowForm} />}
                 />
                 <Route
                     path="/login"
