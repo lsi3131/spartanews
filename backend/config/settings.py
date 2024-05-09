@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "43.201.253.5",
+    "15.164.222.227",
 ]
 
 
@@ -87,6 +88,8 @@ TEMPLATES = [
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
+    "http://15.164.222.227:3000",
+    "https://15.164.222.227:3000",
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"

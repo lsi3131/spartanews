@@ -61,7 +61,8 @@ const SignupForm = () => {
     const navigate = useNavigate()
 
     function getUrl(subUrl) {
-        const urlRoot = 'http://127.0.0.1:8000'
+        // const urlRoot = 'http://127.0.0.1:8000'
+        const urlRoot = 'http://15.164.222.227:8000'
         return `${urlRoot}${subUrl}`
     }
 
