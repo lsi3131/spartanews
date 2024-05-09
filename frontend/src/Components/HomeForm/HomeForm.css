@@ -1,8 +1,7 @@
 .home-content {
     position: relative;
     top: 100px;
-    padding: 0px 100px;
-    padding-bottom: 100px;
+    padding: 0 20% 100px;
 }
 
 .article {
@@ -57,4 +56,8 @@
 .domain-name {
     display: inline-block;
     font-size: 14px;
+}
+
+.article-author-link {
+    font-weight: bold;
 }
