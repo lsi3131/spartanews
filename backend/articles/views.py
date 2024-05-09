@@ -9,6 +9,7 @@ from rest_framework.pagination import PageNumberPagination
 from .models import Article, Comment
 from .article_validate import validate_article_data, validate_comment_data
 from django.db.models import Count
+from django.core.serializers import serialize
 
 
 
@@ -188,6 +189,24 @@ class ArticleLineUpAPIView(APIView):
 class ArticleCommentsAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def get_children_data(self, comment):
+        children_data = []
+        children = comment.get_children()
+        for child in children:
+            recommend = [r.id for r in child.recommend.all()]
+            children_data.append({
+                "id": child.id,
+                "article": child.article.id,
+                "author": child.author.username,
+                "parent_comment_id": child.parent_comment_id,
+                "content": child.content,
+                "recommend": recommend,
+                "created_at": child.created_at,
+                "updated_at": child.updated_at,
+                "children": self.get_children_data(child),  # 재귀적으로 자식 댓글의 자식 댓글들의 데이터도 포함합니다.
+            })
+        return children_data
+
     def get(self, request, article_pk):
         article = get_object_or_404(Article, id=article_pk)
         comments = article.comments.all()
@@ -195,12 +214,15 @@ class ArticleCommentsAPIView(APIView):
         response_data = []
         for comment in comments:
             recommend = [r.id for r in comment.recommend.all()]
+            children_data = self.get_children_data(comment)
+
             response_data.append(
                 {
                     "id": comment.id,
                     "article": comment.article.id,
                     "author": comment.author.username,
                     "parent_comment_id": comment.parent_comment_id,
+                    "children": children_data,
                     "content": comment.content,
                     "recommend": recommend,
                     "created_at": comment.created_at,
