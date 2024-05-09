@@ -20,6 +20,7 @@
 .topicinfo {
     margin-top: 10px;
 }
+
 .topic,
 .topicinfo > span {
     font-family: "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif, "Noto Emoji";
@@ -39,4 +40,14 @@
 
 .topic_contents > pre {
     font-size: 15px;
+}
+
+.detail-author-link {
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+}
+
+.detail-author-link:hover {
+    color: #00000029;
 }
