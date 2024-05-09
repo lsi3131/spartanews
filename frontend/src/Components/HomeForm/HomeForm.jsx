@@ -56,8 +56,8 @@ const HomeForm = () => {
                 {},
                 { headers: { Authorization: `Bearer ${accessToken}` } },
             )
-            const updatedResponse = await axios.get('http://127.0.0.1:8000/api/articles/')
-            setArticles(updatedResponse.data.results)
+            const Updateresponse = await axios.get(`http://127.0.0.1:8000/api/articles/?page=${currentPage}`)
+                setArticles(Updateresponse.data)
         } catch (error) {
             console.error('에러가 발생했습니다:', error)
         }
@@ -69,8 +69,8 @@ const HomeForm = () => {
             const response = await axios.delete(`http://127.0.0.1:8000/api/articles/${articleId}/likey/`, {
                 headers: { Authorization: `Bearer ${accessToken}` },
             })
-            const updatedResponse = await axios.get('http://127.0.0.1:8000/api/articles/')
-            setArticles(updatedResponse.data.results)
+            const Updateresponse = await axios.get(`http://127.0.0.1:8000/api/articles/?page=${currentPage}`)
+                setArticles(Updateresponse.data)
         } catch (error) {
             console.error('에러가 발생했습니다:', error)
         }
@@ -97,7 +97,7 @@ const HomeForm = () => {
         <div className="home-content">
             <div className="home-wrapper">
                 <div className="articles">
-                    {articles.results.map((article, index) => (
+                    {articles.results && articles.results.map((article, index) => (
                         <div key={article.id} className="article">
                             <div className="article-num">{index + 1 + (currentPage - 1) * articles.per_page}</div>
                             <div className="article-head">
