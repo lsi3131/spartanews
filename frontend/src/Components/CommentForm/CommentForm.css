@@ -1,15 +1,15 @@
-.comments-input {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .comment {
     display: flex;
     justify-content: space-between;
     /*justify-content: left;*/
     /*align-items: center;*/
 }
+
+.comment-left {
+    display: flex;
+    justify-content: left;
+}
+
 
 .comment-author {
     margin-right: 10px;
@@ -20,16 +20,65 @@
     /*justify-content: flex-end;*/
 }
 
+.comment-buttons-container > button {
+    background-color: #434343b2;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 12px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
 .comment-root {
     display: flex;
 }
 
-.comment-bottom button{
-  width: auto;
-  text-align: left;
+.comment-bottom button {
+    width: auto;
+    text-align: left;
 }
 
-.comment-add {
+.reply-comment-button {
+    height: 40px;
+    background-color: transparent;
+    color: red;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.comment-wrapper {
     display: flex;
-    margin-left: 40px;
+    justify-content: center;
+    align-items: center;
+}
+
+/*.comment-textarea {*/
+/*    width: 100%; !* textarea의 너비를 100%로 설정 *!*/
+/*    height: 100px; !* textarea의 높이 설정 *!*/
+/*    resize: vertical; !* 수직 크기 조정만 가능하도록 설정 *!*/
+/*    padding: 8px; !* 내부 패딩 설정 *!*/
+/*    border: 1px solid #ccc; !* 테두리 설정 *!*/
+/*    border-radius: 4px; !* 테두리 반경 설정 *!*/
+/*    font-size: 20px; !* 폰트 크기 설정 *!*/
+/*    line-height: 1.5; !* 줄 간격 설정 *!*/
+/*}*/
+
+.comment-wrapper textarea {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    width: 100%;
+    padding-top: 10px;
+    padding-left: 10px;
+    font-size: 16px;
+    outline: none;
+    background-color: transparent;
+    border: 2px solid #00000029;
+}
+
+.comment-wrapper textarea:focus {
+    border-color: gray;
 }

@@ -7,7 +7,7 @@ function getUrl(subUrl) {
     return `${urlRoot}${subUrl}`
 }
 
-const AddComment = ({parentComment, onAddComment}) => {
+const ReplyComment = ({parentComment, onAddComment}) => {
     const [content, setContent] = useState('');
 
     const submitAddComment = () => {
@@ -17,7 +17,7 @@ const AddComment = ({parentComment, onAddComment}) => {
 
     return (
         <div>
-            <div className="comments-input">
+            <div className="comment-wrapper">
                 <div className="">
                     {/*<p>[이미지넣을까]</p>*/}
                     <p>{'[유저이름]'}</p>
@@ -53,24 +53,38 @@ const Comment = ({comment, onDeleteComment, onUpdateComment, onAddComment}) => {
     return (
         <div>
             <div key={comment.id} className="comment">
-                <h4 className="comment-author">{comment.author}</h4>
-                <p className="comment-content">{comment.content}</p>
+                <div className="comment-left">
+                    <h4 className="comment-author">{comment.author}</h4>
+                    <p className="comment-content">{comment.content}</p>
+                </div>
                 <div className="comment-buttons-container">
                     <button onClick={submitDeleteComment}>삭제</button>
                     <button onClick={submitUpdateComment}>수정</button>
                 </div>
             </div>
             <div className="comment-bottom">
-                <button onClick={handleAddCommentMode}>답글</button>
+                <button className="reply-comment-button" onClick={handleAddCommentMode}>답글 달기</button>
             </div>
             {addCommentModeOn && (
                 <>
                     <div className="comment-add">
-                        <AddComment parentComment={comment} onAddComment={onAddComment}/>
+                        < ReplyComment parentComment={comment} onAddComment={onAddComment}/>
                     </div>
                 </>
-            )
-            }
+            )}
+            {comment.children && comment.children.map(child => (
+                <>
+                    <div className="comment-add">
+                        <Comment
+                            key={child.id}
+                            comment={child}
+                            onDeleteComment={onDeleteComment}
+                            onUpdateComment={onUpdateComment}
+                            onAddComment={onAddComment}
+                        />
+                    </div>
+                </>
+            ))}
         </div>
     );
 };
@@ -82,19 +96,20 @@ const CommentList = ({
         <div className="comment-list">
             {comments.map((comment, index) => (
                 comment.parent_comment_id === null && (
-                    <Comment key={index} comment={comment}
-                             onDeleteComment={onDeleteComment}
-                             onUpdateComment={onUpdateComment}
-                             onAddComment={onAddComment}/>
+                    <>
+                        <Comment key={index} comment={comment}
+                                 onDeleteComment={onDeleteComment}
+                                 onUpdateComment={onUpdateComment}
+                                 onAddComment={onAddComment}/>
+                        <hr/>
+                    </>
                 )
             ))}
         </div>
     );
 };
 
-const CommentForm = ({
-                         articleId, username, onAddComment
-                     }) => {
+const CommentForm = ({username, onAddComment}) => {
     const [content, setContent] = useState('');
 
     const handleSubmit = async (e) => {
@@ -106,14 +121,15 @@ const CommentForm = ({
 
     return (
         <div>
-            <div className="comments-input">
-                <div className="">
-                    <p>{username}</p>
+            <div className="comment-wrapper">
+                <div className="" style={{marginRight: '10px'}}>
+                    <h4>{username}</h4>
                 </div>
                 <textarea
                     placeholder="댓글을 입력하세요"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
+                    rows={4}
                 ></textarea>
             </div>
             <button onClick={handleSubmit}>댓글 등록</button>
@@ -216,7 +232,7 @@ const CommentBox = ({
                          onUpdateComment={handleUpdateComment}
                          onAddComment={handleAddComment}
             />
-            <hr style={{marginTop: '20px', marginBottom: '20px'}}/>
+            <div style={{marginTop: "5px"}}></div>
             <CommentForm articleId={articleId} username={username} onAddComment={handleAddComment}/>
         </div>
     );
