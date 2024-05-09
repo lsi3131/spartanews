@@ -23,7 +23,7 @@ const ShowForm = () => {
     const handlePageChange = (page) => {
         setCurrentPage(page)
     }
-    const [userId, setUserId] = useState(null) // userId 상태 추가
+    const [userId, setUserId] = useState(null) 
 
     useEffect(() => {
         const fetchData = async () => {
@@ -95,11 +95,10 @@ const ShowForm = () => {
         <div className="home-content">
             <div className="home-wrapper">
                 <div className="articles">
-                    {articles.results && articles.results.filter(article => article.article_type === "ask").map((article, index) => (
+                    {articles.results && articles.results.filter(article => article.article_type === "show").map((article, index) => (
                         <div key={article.id} className="article">
-                            <div className="article-num">{index + 1 + (currentPage - 1) * articles.per_page}</div>
+                            <div className="article-num">{index +1 + (currentPage - 1) * articles.per_page}</div>
                             <div className="article-head">
-                                <p></p>
                                 <h2>
                                     {article.article_link ? (
                                         <a href={article.article_link}>
