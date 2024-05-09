@@ -1,0 +1,25 @@
+.home-content {
+    position: relative;
+    top: 100px;
+    left: 100px;
+}
+
+.article {
+    border-bottom: 2px solid #00000029;
+    padding: 20px 20px;
+    display: flex;
+}
+
+.article a {
+    text-decoration: none;
+    color: black;
+}
+
+.article a:hover {
+    color: #00000029;
+}
+
+.domain-name {
+    display: inline-block;
+    font-size: 14px;
+}
