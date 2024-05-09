@@ -6,6 +6,7 @@
 }
 
 .comment-left {
+    margin-top: 10px;
     display: flex;
     justify-content: left;
 }
@@ -64,10 +65,14 @@
     padding-left: 10px;
     font-size: 16px;
     outline: none;
-    background-color: transparent;
+    background-color: #ffffff;
     border: 2px solid #00000029;
 }
 
 .comment-wrapper textarea:focus {
     border-color: gray;
+}
+
+.comment-reply-container {
+    margin-left: 40px;
 }

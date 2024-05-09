@@ -7,35 +7,6 @@ function getUrl(subUrl) {
     return `${urlRoot}${subUrl}`
 }
 
-const ReplyComment = ({username, parentComment, onAddComment}) => {
-    const [content, setContent] = useState('');
-
-    const submitReplyComment = () => {
-        onAddComment(content, parentComment.id)
-    }
-
-    return (
-        <div>
-            <div className="comment-wrapper" style={{marginLeft: "50px"}}>
-                <div className="">
-                    <h4>{username}</h4>
-                </div>
-                <textarea
-                    placeholder="댓글을 입력하세요"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                ></textarea>
-            </div>
-            <div>
-                <div className="comment-buttons-container">
-                    <p></p>
-                    <button onClick={submitReplyComment} style={{width: '100px'}}>댓글 등록</button>
-                </div>
-            </div>
-        </div>
-    )
-}
-
 const Comment = ({username, comment, onDeleteComment, onUpdateComment, onAddComment}) => {
     const [addCommentModeOn, setAddCommentModeOn] = useState(false);
 
@@ -49,6 +20,11 @@ const Comment = ({username, comment, onDeleteComment, onUpdateComment, onAddComm
 
     const handleAddCommentMode = () => {
         addCommentModeOn ? setAddCommentModeOn(false) : setAddCommentModeOn(true);
+    }
+
+    const handleReplyComment = (content, parentId) => {
+        onAddComment(content, parentId)
+        setAddCommentModeOn(false)
     }
 
     return (
@@ -68,17 +44,16 @@ const Comment = ({username, comment, onDeleteComment, onUpdateComment, onAddComm
             </div>
             {addCommentModeOn && (
                 <>
-                    <div className="comment-add">
+                    <div className="comment-reply-container">
                         <hr/>
-                        <ReplyComment username={username} parentComment={comment} onAddComment={onAddComment}/>
+                        <CommentForm username={username} parentCommentId={comment.id} onAddComment={handleReplyComment}/>
                     </div>
                 </>
             )}
             {comment.children && comment.children.map(child => (
                 <>
                     <hr/>
-                    <p>-</p>
-                    <div className="comment-add" style={{marginLeft: "50px"}}>
+                    <div className="" style={{marginLeft: "50px"}}>
                         <Comment
                             key={child.id}
                             comment={child}
@@ -113,13 +88,12 @@ const CommentList = ({
     );
 };
 
-const CommentForm = ({username, onAddComment}) => {
+const CommentForm = ({username, onAddComment, parentCommentId}) => {
     const [content, setContent] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        onAddComment(content)
-
+        onAddComment(content, parentCommentId)
         setContent('');
     };
 
