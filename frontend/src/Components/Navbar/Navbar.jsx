@@ -10,6 +10,8 @@ const AuthenticatedNavbar = ({ username }) => {
             <div className="left">
                 <Link to="/">Home</Link>
                 <Link to="/write">Write</Link>
+                <Link to="/ask">Ask</Link>
+                <Link to="/show">Show</Link>
             </div>
             <div className="right">
                 <Link to={`/profile/${username}/`}>{username}</Link>
@@ -25,6 +27,8 @@ const UnauthenticatedNavbar = () => {
             <div className="left">
                 <Link to="/">Home</Link>
                 <Link to="/write">Write</Link>
+                <Link to="/ask">Ask</Link>
+                <Link to="/show">Show</Link>
             </div>
             <div className="right">
                 <Link to="/login">Login</Link>
