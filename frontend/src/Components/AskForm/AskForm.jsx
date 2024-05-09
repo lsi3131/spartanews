@@ -20,7 +20,6 @@ const AskForm = () => {
     const [error, setError] = useState(null);
 
     const [currentPage, setCurrentPage] = useState(1)
-    const [pageCount, setPageCount] = useState(1)
     const handlePageChange = (page) => {
         setCurrentPage(page)
     }
@@ -100,7 +99,7 @@ const AskForm = () => {
         <div className="home-content">
             <div className="home-wrapper">
                 <div className="articles">
-                    {articles.results && articles.results.filter(article => article.article_type === "ask").map((article, index) => (
+                    {articles.results && articles.results.map((article, index) => (
                         <div key={article.id} className="article">
                             <div className="article-num">{index +1 + (currentPage - 1) * articles.per_page}</div>
                             <div className="article-head">

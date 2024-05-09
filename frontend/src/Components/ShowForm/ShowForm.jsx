@@ -23,12 +23,16 @@ const ShowForm = () => {
     const handlePageChange = (page) => {
         setCurrentPage(page)
     }
-    const [userId, setUserId] = useState(null) 
+    const [userId, setUserId] = useState(null)
+
+    function getArticleUrl(type) {
+        return `http://127.0.0.1:8000/api/articles/?page=${currentPage}&type=${type}`
+    }
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/articles/?page=${currentPage}`)
+                const response = await axios.get(getArticleUrl('show'))
                 setArticles(response.data)
                 setLoading(false)
             } catch (error) {
@@ -54,7 +58,7 @@ const ShowForm = () => {
                 {},
                 { headers: { Authorization: `Bearer ${accessToken}` } },
             )
-            const Updateresponse = await axios.get(`http://127.0.0.1:8000/api/articles/?page=${currentPage}`)
+            const Updateresponse = await axios.get(getArticleUrl('show'))
             setArticles(Updateresponse.data)
         } catch (error) {
             console.error('에러가 발생했습니다:', error)
@@ -67,7 +71,7 @@ const ShowForm = () => {
             const response = await axios.delete(`http://127.0.0.1:8000/api/articles/${articleId}/likey/`, {
                 headers: { Authorization: `Bearer ${accessToken}` },
             })
-            const Updateresponse = await axios.get(`http://127.0.0.1:8000/api/articles/?page=${currentPage}`)
+            const Updateresponse = await axios.get(getArticleUrl('show'))
             setArticles(Updateresponse.data)
         } catch (error) {
             console.error('에러가 발생했습니다:', error)
@@ -95,7 +99,7 @@ const ShowForm = () => {
         <div className="home-content">
             <div className="home-wrapper">
                 <div className="articles">
-                    {articles.results && articles.results.filter(article => article.article_type === "show").map((article, index) => (
+                    {articles.results && articles.results.map((article, index) => (
                         <div key={article.id} className="article">
                             <div className="article-num">{index +1 + (currentPage - 1) * articles.per_page}</div>
                             <div className="article-head">
