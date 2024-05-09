@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 
 import { useState, useEffect } from 'react'
 
+import Cursor from './Components/Cursor/Cursor'
 import Navbar from './Components/Navbar/Navbar'
 import LoginForm from './Components/LoginForm/LoginForm'
 import HomeForm from './Components/HomeForm/HomeForm'
@@ -47,6 +48,7 @@ function App() {
 
     return (
         <>
+            <Cursor />
             <Navbar username={userInfos.username} />
             <Routes>
                 <Route path="/" element={<HomeForm />} />
@@ -70,9 +72,7 @@ function App() {
                     path="/signup"
                     element={<AnonymouseRoute authenticated={authenticated} component={SignupForm} />}
                 />
-                <Route
-                    path="/detail/:articleId" element={<DetailArticleForm/>}
-                />
+                <Route path="/detail/:articleId" element={<DetailArticleForm />} />
 
                 <Route path="/profile/:name" element={<ProfileForm username={userInfos.username} />} />
             </Routes>
