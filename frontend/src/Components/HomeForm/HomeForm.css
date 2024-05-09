@@ -11,6 +11,12 @@
     display: grid;
     grid-template-columns: 10px 20px 1fr;
     grid-gap: 5px;
+    align-items: baseline;
+}
+
+.article-button button{
+    width: 80px;
+    margin-left: 20px ;
 }
 
 .article-head {
@@ -26,6 +32,7 @@
 
 .article-num {
     font-weight: bold;
+    font-size: 1.2rem;
 }
 
 .article-bottom {
