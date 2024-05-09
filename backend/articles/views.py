@@ -17,7 +17,13 @@ class ArticleAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
-        articles = get_list_or_404(Article.objects.order_by('-id'))
+        article_type = request.GET.get('type', default=None)
+        if article_type:
+            articles = Article.objects.filter(article_type=article_type).order_by('-id')
+        else:
+            articles = Article.objects.order_by('-id')
+
+        # articles = get_list_or_404(Article.objects.order_by('-id'))
         pageination = CustomPagination()
         page_articles=pageination.paginate_queryset(articles,request)
         data =[{
