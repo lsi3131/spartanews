@@ -18,6 +18,7 @@
 
 body {
     margin: 0;
+    height: 100vh;
     font-family: 'Nanum Gothic Coding', monospace;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
