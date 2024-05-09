@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import { Navigate } from 'react-router-dom'
+
+
 
 import './HomeForm.css'
 
@@ -16,6 +19,8 @@ const HomeForm = () => {
     const [articles, setArticles] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [loggedInUserId, setLoggedInUserId] = useState(null);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -30,7 +35,48 @@ const HomeForm = () => {
         }
 
         fetchData()
-    }, []) // 빈 배열을 전달하여 초기 렌더링 시에만 실행되도록 함
+    }, [])
+
+    const likeButton = async (articleId) => {
+        const accessToken = localStorage.getItem('accessToken');
+
+        try {
+            const response = await axios.post(
+                `http://127.0.0.1:8000/api/articles/${articleId}/likey/`,
+                {},
+                { headers: { Authorization: `Bearer ${accessToken}` } }
+            );
+            const updatedResponse = await axios.get('http://127.0.0.1:8000/api/articles/');
+            setArticles(updatedResponse.data.results);
+        } catch (error) {
+            console.error("에러가 발생했습니다:", error);
+        }
+    };
+
+    const UnlikeButton = async (articleId) => {
+        const accessToken = localStorage.getItem('accessToken');
+        try {
+            const response = await axios.delete(
+                `http://127.0.0.1:8000/api/articles/${articleId}/likey/`,
+                { headers: { Authorization: `Bearer ${accessToken}` } }
+            );
+            const updatedResponse = await axios.get('http://127.0.0.1:8000/api/articles/');
+            setArticles(updatedResponse.data.results);
+        } catch (error) {
+            console.error("에러가 발생했습니다:", error);
+        }
+    };
+
+
+    const formatDate = (dateString) => {
+        const currentDate = new Date();
+        const createdDate = new Date(dateString);
+        const timeDiff = Math.abs(currentDate.getTime() - createdDate.getTime());
+        const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+        return `${daysDiff}일전`;
+    };
+
 
     if (loading) {
         return <div>Loading...</div>
@@ -44,17 +90,40 @@ const HomeForm = () => {
         <div className="home-content">
             <div className="home-wrapper">
                 <div className="articles">
-                    {articles.map((article) => (
+                    {articles.map((article, index) => (
                         <div key={article.id} className="article">
-                            <h2>
-                                {article.article_link ? (
-                                    <a href={article.article_link}>{article.title}</a>
+                            <div className="article-num">{index + 1}</div>
+                            <div className="article-head">
+                                <p></p>
+                                <h2>
+                                    {article.article_link ? (
+                                        <a href={article.article_link}>
+                                            {article.title.length < 20 ? article.title : article.title.slice(0, 20) + "..."}
+                                        </a>
+                                    ) : (
+                                        article.title
+                                    )}
+                                </h2>
+                                <span className="domain-name">({extractDomain(article.article_link)})</span>
+                            </div>
+                            <div className="article-body">
+                                <a href="">
+                                    {article.content.length < 30 ? article.content : article.content.slice(0, 30) + "..."}
+                                </a>
+                            </div>
+                            <div className="article-bottom">
+                                <p>{article.likey_user_id}</p>
+                                <span> by {article.author} | </span>
+                                <span>{formatDate(article.created_at)} | </span>
+                                <span>Comments: {article.comment_count} | </span>
+                                <span>Likes: {article.likey_count}</span>
+                                {article.likey_user_id ? (
+                                    <button onClick={() => likeButton(article.id)}>Like</button>
                                 ) : (
-                                    article.title
+                                    <button onClick={() => UnlikeButton(article.id)}>Unlike</button>
                                 )}
-                            </h2>
-                            <span className="domain-name">({extractDomain(article.article_link)})</span>
-                            <p>{article.content}</p>
+                            </div>
+
                         </div>
                     ))}
                 </div>

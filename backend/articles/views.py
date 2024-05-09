@@ -16,6 +16,7 @@ class ArticleAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
+        user = request.user
         articles = get_list_or_404(Article)
         pageination = PageNumberPagination()
         page_articles=pageination.paginate_queryset(articles,request)
@@ -29,6 +30,7 @@ class ArticleAPIView(APIView):
             "created_at": article.created_at,
             "comment_count": article.comments.count(),
             "likey_count": article.likey.count(),
+            "likey_user_id": [likey.id for likey in article.likey.all() if likey.id == user.id],
         } for article in page_articles]
         return pageination.get_paginated_response(data)
 
