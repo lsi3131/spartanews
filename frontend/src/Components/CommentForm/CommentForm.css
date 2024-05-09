@@ -1,0 +1,123 @@
+.comment {
+    display: flex;
+    justify-content: space-between;
+    /*align-items: center;*/
+}
+
+.comment-left {
+    display: flex;
+    margin-top: 10px;
+}
+
+.comment-left > pre {
+    font-size: 15px;
+}
+
+.comment-author {
+    margin-right: 10px;
+}
+
+.comment-buttons-container {
+    display: flex;
+    /*justify-content: space-between;*/
+}
+
+.comment-buttons-container > button {
+    background-color: #434343b2;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    width: 100px;
+    height: 40px;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.comment-update-buttons-container {
+    margin-bottom: 10px;
+}
+
+.comment-update-buttons-container > button {
+    background-color: #434343b2;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    width: 100px;
+    height: 40px;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.comment-root {
+    display: flex;
+}
+
+.comment-bottom button {
+    width: auto;
+    text-align: left;
+}
+
+.reply-comment-button {
+    height: 40px;
+    background-color: transparent;
+    color: red;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+
+.comment-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.comment-wrapper textarea {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    width: 100%;
+    padding-top: 10px;
+    padding-left: 10px;
+    font-size: 15px;
+    outline: none;
+    background-color: #ffffff;
+    border: 2px solid #00000029;
+}
+
+.comment-wrapper textarea:focus {
+    border-color: gray;
+}
+
+.comment-reply-container {
+    margin-left: 40px;
+    margin-bottom: 10px;
+}
+
+.comment-horizontal {
+    display: flex;
+    justify-content: right;
+}
+
+.comment-vertical {
+    display: flex;
+    justify-content: right;
+    flex-direction: column;}
+
+.comment-justify-end {
+    display: flex;
+    justify-content: flex-end;
+}

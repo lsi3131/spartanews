@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './DetailArticleForm.css';
+import CommentBox from "../CommentForm/CommentForm";
 
-const DetailArticleForm = () => {
+const DetailArticleForm = ({username}) => {
     const { articleId } = useParams();
     const [article, setArticle] = useState(null);
 
@@ -48,9 +49,11 @@ const DetailArticleForm = () => {
                         <span>Likes: {article.likey_count}</span>
                     </div>
                     <div className="topic_contents">{article.content}</div>
-                    
+
                 </div>
-                <div className="comment-form"></div>
+            </div>
+            <div className="comment-form">
+                <CommentBox articleId={articleId} username={username}/>
             </div>
         </div>
     );
