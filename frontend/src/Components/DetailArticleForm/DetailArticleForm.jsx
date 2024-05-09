@@ -48,7 +48,9 @@ const DetailArticleForm = ({userId, username}) => {
                         <span>Comments: {article.comment_count} | </span>
                         <span>Likes: {article.likey_count}</span>
                     </div>
-                    <div className="topic_contents">{article.content}</div>
+                    <div className="topic_contents">
+                        {article.content}
+                    </div>
 
                 </div>
             </div>
