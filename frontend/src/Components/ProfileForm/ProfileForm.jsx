@@ -74,7 +74,7 @@ const ProfileForm = (props) => {
                         <span className="text introtext">{userInfo.introduce}</span>
                     </div>
                 </div>
-                {username === userInfo.username && <button onClick={logoutProcess}>Logout</button>}
+                {username === userInfo.username && <button className="profile-button" onClick={logoutProcess}>Logout</button>}
             </div>
         </div>
     )

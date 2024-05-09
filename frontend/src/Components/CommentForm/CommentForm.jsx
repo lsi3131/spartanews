@@ -9,18 +9,35 @@ function getUrl(subUrl) {
 
 const Comment = ({username, comment, onDeleteComment, onUpdateComment, onAddComment}) => {
     const [addCommentModeOn, setAddCommentModeOn] = useState(false);
+    const [updateCommentModeOn, setUpdateCommentModeOn] = useState(false);
+    const [content, setContent] = useState('');
 
-    const submitDeleteComment = (commentId) => {
-        onDeleteComment(comment.id)
+    const submitDeleteComment = () => {
+        const result = window.confirm("댓글을 삭제하시겠습니까?");
+        if (result) {
+            onDeleteComment(comment.id)
+        }
     }
 
-    const submitUpdateComment = (commentId, content) => {
-        // 답글 수정 모드로 설정
+    const submitUpdateComment = () => {
+        // console.log(`id=${comment.id}, content=${content}`)
+        onUpdateComment(comment.id, content)
+        setUpdateCommentModeOn(false)
+    }
+
+    const handleUpdateCommentMode = () => {
+        setContent(comment.content)
+        setUpdateCommentModeOn(true)
+    }
+
+    const handleCancelUpdate = () => {
+        setUpdateCommentModeOn(false)
     }
 
     const handleAddCommentMode = () => {
         addCommentModeOn ? setAddCommentModeOn(false) : setAddCommentModeOn(true);
     }
+
 
     const handleReplyComment = (content, parentId) => {
         onAddComment(content, parentId)
@@ -29,24 +46,53 @@ const Comment = ({username, comment, onDeleteComment, onUpdateComment, onAddComm
 
     return (
         <div>
-            <div key={comment.id} className="comment">
-                <div className="comment-left">
-                    <h4 className="comment-author">{comment.author}</h4>
-                    <p className="comment-content">{comment.content}</p>
-                </div>
-                <div className="comment-buttons-container">
-                    <button onClick={submitDeleteComment}>삭제</button>
-                    <button onClick={submitUpdateComment}>수정</button>
-                </div>
-            </div>
-            <div className="comment-bottom">
-                <button className="reply-comment-button" onClick={handleAddCommentMode}>답글 달기</button>
+            <div key={comment.id}>
+                {updateCommentModeOn ? (
+                        <div className="comment-vertical">
+                            <div className="comment-wrapper">
+                                <h4 className="comment-author">{comment.author}</h4>
+                                <textarea
+                                    placeholder="댓글을 입력하세요"
+                                    value={content}
+                                    onChange={(e) => setContent(e.target.value)}
+                                    rows={4}
+                                ></textarea>
+                            </div>
+                            <div className="comment-justify-end">
+                                <div className="comment-update-buttons-container">
+                                    <button onClick={handleCancelUpdate}>취소</button>
+                                    <button onClick={submitUpdateComment}>수정</button>
+                                </div>
+                            </div>
+                        </div>
+                    ) :
+                    (
+                        <div>
+                            <div className="comment">
+                                <div className="comment-left">
+                                    <h4 className="comment-author">{comment.author}</h4>
+                                    <pre className="comment-content">{comment.content}</pre>
+                                </div>
+                                {(comment.author === username) && (
+                                    <div className="comment-buttons-container">
+                                        <button onClick={submitDeleteComment}>삭제</button>
+                                        <button onClick={handleUpdateCommentMode}>수정</button>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="comment-bottom">
+                                <button className="reply-comment-button" onClick={handleAddCommentMode}>답글 달기</button>
+                            </div>
+                        </div>
+
+                    )}
             </div>
             {addCommentModeOn && (
                 <>
                     <div className="comment-reply-container">
                         <hr/>
-                        <CommentForm username={username} parentCommentId={comment.id} onAddComment={handleReplyComment}/>
+                        <CommentForm username={username} parentCommentId={comment.id}
+                                     onAddComment={handleReplyComment}/>
                     </div>
                 </>
             )}
@@ -56,6 +102,7 @@ const Comment = ({username, comment, onDeleteComment, onUpdateComment, onAddComm
                     <div className="" style={{marginLeft: "50px"}}>
                         <Comment
                             key={child.id}
+                            username={username}
                             comment={child}
                             onDeleteComment={onDeleteComment}
                             onUpdateComment={onUpdateComment}
