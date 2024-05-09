@@ -4,8 +4,8 @@ import './Pagination.css'
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     console.log(currentPage, totalPages)
     const getPageRange = () => {
-        const startPage = Math.max(1, currentPage - 4)
-        const endPage = Math.min(totalPages, currentPage + 4)
+        const startPage = Math.max(1, currentPage - 2)
+        const endPage = Math.min(totalPages, currentPage + 2)
         return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i)
     }
 

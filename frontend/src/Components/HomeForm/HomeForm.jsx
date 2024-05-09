@@ -99,7 +99,7 @@ const HomeForm = () => {
                 <div className="articles">
                     {articles.results.map((article, index) => (
                         <div key={article.id} className="article">
-                            <div className="article-num">{index + 1}</div>
+                            <div className="article-num">{index + 1 + (currentPage - 1) * articles.per_page}</div>
                             <div className="article-head">
                                 <p></p>
                                 <h2>
