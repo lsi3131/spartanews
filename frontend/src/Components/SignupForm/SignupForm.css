@@ -6,6 +6,7 @@
 }
 
 .signup-wrapper {
+    margin-top: 100px;
     width: 600px;
     border: 2px solid #00000029;
     backdrop-filter: blur(30px);
@@ -66,6 +67,12 @@ textarea:focus {
 
 .error-message {
     color: red;
+    font-weight: bold;
+}
+
+.success-message {
+    color: green;
+    font-weight: bold;
 }
 
 .input-title {
