@@ -1,0 +1,30 @@
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination-wrapper button {
+    width: 60px;
+    height: 40px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    margin: 0 5px;
+    font-size: 16px;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.pagination-wrapper button:hover {
+    background-color: #f0f0f0;
+    border-color: #999;
+    color: #000;
+}
+
+.pagination-wrapper button:disabled {
+    background-color: #ddd;
+    border-color: #ccc;
+    color: #999;
+    cursor: not-allowed;
+}

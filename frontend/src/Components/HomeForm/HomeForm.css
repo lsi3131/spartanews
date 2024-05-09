@@ -1,7 +1,8 @@
 .home-content {
     position: relative;
     top: 100px;
-    left: 100px;
+    left: 0; /* 좌측으로 이동되도록 수정 */
+    padding: 0px 100px; /* 여백을 추가하여 좌측으로 이동 */
 }
 
 .article {
