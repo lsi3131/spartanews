@@ -30,7 +30,7 @@ class ArticleAPIView(APIView):
             "created_at": article.created_at,
             "comment_count": article.comments.count(),
             "likey_count": article.likey.count(),
-            "likey_user_id": [likey.id for likey in article.likey.all() if likey.id == user.id],
+            "likey_user_id": [likey.id for likey in article.likey.all()],
         } for article in page_articles]
         return pageination.get_paginated_response(data)
 

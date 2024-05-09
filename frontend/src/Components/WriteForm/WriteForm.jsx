@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './WriteForm.css'
 
+
 export default function WriteForm() {
     const accessToken = localStorage.getItem('accessToken')
     const [articleType, setArticleType] = useState('news')

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Navigate } from 'react-router-dom'
+import { jwtDecode } from 'jwt-decode';
 
 
 
@@ -19,7 +20,7 @@ const HomeForm = () => {
     const [articles, setArticles] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
-    const [loggedInUserId, setLoggedInUserId] = useState(null);
+    const [userId, setUserId] = useState(null); // userId 상태 추가
 
 
     useEffect(() => {
@@ -34,7 +35,13 @@ const HomeForm = () => {
             }
         }
 
-        fetchData()
+        fetchData();
+
+        const accessToken = localStorage.getItem('accessToken');
+        if (accessToken) {
+            const decodedToken = jwtDecode(accessToken);
+            setUserId(decodedToken.user_id);
+        }
     }, [])
 
     const likeButton = async (articleId) => {
@@ -112,16 +119,15 @@ const HomeForm = () => {
                                 </a>
                             </div>
                             <div className="article-bottom">
-                                <p>{article.likey_user_id}</p>
                                 <span> by {article.author} | </span>
                                 <span>{formatDate(article.created_at)} | </span>
                                 <span>Comments: {article.comment_count} | </span>
                                 <span>Likes: {article.likey_count}</span>
-                                {article.likey_user_id ? (
-                                    <button onClick={() => likeButton(article.id)}>Like</button>
-                                ) : (
+                                {userId !== null && (article.likey_user_id.includes(userId) ? (
                                     <button onClick={() => UnlikeButton(article.id)}>Unlike</button>
-                                )}
+                                ) : (
+                                    <button onClick={() => likeButton(article.id)}>Like</button>
+                                ))}
                             </div>
 
                         </div>
