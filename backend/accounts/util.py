@@ -52,6 +52,7 @@ class AccountValidator:
             self.response_data = Response({"error": "비밀번호에는 특수문자가 포함되어야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
             return False
 
+        self.response_data = Response({"message": "비밀번호로 사용가능합니다."}, status=status.HTTP_200_OK)
         return True
 
     def validate_username(self, username: str) -> bool:
@@ -62,9 +63,10 @@ class AccountValidator:
 
         # 이미 가입한 유저명 제한
         if get_user_model().objects.filter(username=username).exists():
-            self.response_data = Response({"error": "이미 가입한 계정입니다."}, status=status.HTTP_400_BAD_REQUEST)
+            self.response_data = Response({"error": "이미 가입된 유저명입니다."}, status=status.HTTP_400_BAD_REQUEST)
             return False
-
+        
+        self.response_data = Response({"message": "사용 가능한 유저명입니다."}, status=status.HTTP_200_OK)
         return True
 
     def validate_email(self, email: str) -> bool:
@@ -82,6 +84,7 @@ class AccountValidator:
             self.response_data = Response({"error": "이미 가입한 이메일 주소입니다."}, status=status.HTTP_400_BAD_REQUEST)
             return False
 
+        self.response_data = Response({"message": "사용 가능한 이메일 주소입니다."}, status=status.HTTP_200_OK)
         return True
 
     def get_response_data(self):

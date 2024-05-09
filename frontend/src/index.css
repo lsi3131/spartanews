@@ -4,10 +4,21 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    cursor: none;
+}
+.cursor {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    background-image: url('./Assets/cursor.gif');
+    z-index: 1056;
+    background-size: cover;
+    pointer-events: none;
 }
 
 body {
     margin: 0;
+    height: 100vh;
     font-family: 'Nanum Gothic Coding', monospace;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

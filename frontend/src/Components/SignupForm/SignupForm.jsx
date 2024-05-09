@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import axios from 'axios'
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from 'react-router-dom'
+import useDebounce from './useDebounce'
+import { asyncLogin } from './Login'
 
 import './SignupForm.css'
 
@@ -10,20 +12,53 @@ const SignupForm = () => {
     const [passwordCheck, setPasswordCheck] = React.useState('')
     const [email, setEmail] = React.useState('')
     const [introduce, setIntroduce] = React.useState('')
-    const [usernameMessage, setUsernameMessage] = React.useState('');
-    const [passwordMessage, setPasswordMessage] = React.useState('');
-    const [passwordCheckMessage, setPasswordCheckMessage] = React.useState('');
-    const [emailCheckMessage, setEmailCheckMessage] = React.useState('');
+    const [usernameMessage, setUsernameMessage] = React.useState('')
+    const [passwordMessage, setPasswordMessage] = React.useState('')
+    const [passwordCheckMessage, setPasswordCheckMessage] = React.useState('')
+    const [emailCheckMessage, setEmailCheckMessage] = React.useState('')
+
+    const debounceUsername = useDebounce(username, 250)
+    const debouncePassword = useDebounce(password, 250)
+    const debouncePasswordCheck = useDebounce(passwordCheck, 250)
+    const debounceEmail = useDebounce(email, 250)
+
+    useEffect(() => {
+        // console.log(`debounce name=${debounceUsername}, name=${username}`)
+        if (debounceUsername === username) {
+            checkUserName().then((r) => {})
+        }
+    }, [debounceUsername, username])
+
+    useEffect(() => {
+        // console.log(`debounce pw=${debouncePassword}, password=${password}`)
+        if (debouncePassword === password) {
+            checkPassword().then((r) => {})
+        }
+    }, [debouncePassword, password])
+
+    useEffect(() => {
+        // console.log(`debounce pw=${debouncePasswordCheck}, pw check=${passwordCheck}`)
+        if (debouncePasswordCheck === passwordCheck) {
+            checkPasswordCheck()
+        }
+    }, [debouncePasswordCheck, passwordCheck])
+
+    useEffect(() => {
+        // console.log(`debounce email=${debounceEmail}, password=${email}`)
+        if (debounceEmail === email) {
+            checkEmail().then((r) => {})
+        }
+    }, [debounceEmail, email])
 
     // 제출용 데이터 정보. username, email, password가 입력이 되어 있어야 제출 가능
     const [formValidateChecker, setFormValidateChecker] = React.useState({
         username: false,
         email: false,
         password: false,
-        passwordCheck: false
+        passwordCheck: false,
     })
 
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     function getUrl(subUrl) {
         const urlRoot = 'http://127.0.0.1:8000'
@@ -32,25 +67,25 @@ const SignupForm = () => {
 
     async function signup() {
         try {
-            await checkUserName();
-            await checkPassword();
-            await checkPasswordCheck();
-            await checkEmail();
+            await checkUserName()
+            await checkPassword()
+            await checkPasswordCheck()
+            await checkEmail()
         } catch (error) {
             console.log(error)
         }
 
         if (formValidateChecker.username === false) {
-            console.log('invalid username');
+            console.log('invalid username')
             return
         } else if (formValidateChecker.email === false) {
-            console.log('invalid email');
+            console.log('invalid email')
             return
         } else if (formValidateChecker.password === false) {
-            console.log('invalid password');
+            console.log('invalid password')
             return
         } else if (formValidateChecker.passwordCheck === false) {
-            console.log('invalid password check');
+            console.log('invalid password check')
             return
         }
 
@@ -58,16 +93,18 @@ const SignupForm = () => {
             username: username,
             password: password,
             email: email,
-            introduce: introduce
-        };
+            introduce: introduce,
+        }
 
-        const url =  getUrl('/api/accounts/')
+        const url = getUrl('/api/accounts/')
         try {
             const response = await axios.post(url, data)
-            console.log('Signup successful:', response.data);
-            navigate('/login');
+            console.log('Signup successful:', response.data)
+            await asyncLogin(username, password)
+
+            // navigate('/login');
         } catch (error) {
-            console.error('Error during signup:', error.response.data.error);
+            console.error('Error during signup:', error.response.data.error)
         }
     }
 
@@ -78,22 +115,22 @@ const SignupForm = () => {
         }
 
         const data = {
-            'data': username
+            data: username,
         }
 
-        const url =  getUrl('/api/accounts/validate/username/')
+        const url = getUrl('/api/accounts/validate/username/')
         try {
             const response = await axios.post(url, data)
-            setUsernameMessage('')
+            setUsernameMessage(response.data.message)
             setFormValidateChecker({
                 ...formValidateChecker,
-                'username': true
+                username: true,
             })
         } catch (error) {
             setUsernameMessage(error.response.data.error)
             setFormValidateChecker({
                 ...formValidateChecker,
-                'username': false
+                username: false,
             })
         }
     }
@@ -105,25 +142,23 @@ const SignupForm = () => {
         }
 
         const data = {
-            'data': password
+            data: password,
         }
 
-        const url =  getUrl('/api/accounts/validate/password/')
+        const url = getUrl('/api/accounts/validate/password/')
         try {
             const response = await axios.post(url, data)
-            setPasswordMessage('')
+            setPasswordMessage(response.data.message)
             setFormValidateChecker({
                 ...formValidateChecker,
-                'password': true
+                password: true,
             })
-
         } catch (error) {
             setPasswordMessage(error.response.data.error)
             setFormValidateChecker({
                 ...formValidateChecker,
-                'password': false
+                password: false,
             })
-
         }
 
         checkPasswordCheck()
@@ -136,17 +171,16 @@ const SignupForm = () => {
         }
 
         if (passwordCheck === password) {
-            setPasswordCheckMessage('')
+            setPasswordCheckMessage('비밀번호가 일치합니다.')
             setFormValidateChecker({
                 ...formValidateChecker,
-                'passwordCheck': true
+                passwordCheck: true,
             })
-
         } else {
             setPasswordCheckMessage('비밀번호가 일치하지 않습니다.')
             setFormValidateChecker({
                 ...formValidateChecker,
-                'passwordCheck': false
+                passwordCheck: false,
             })
         }
     }
@@ -158,24 +192,23 @@ const SignupForm = () => {
         }
 
         const data = {
-            'data': email
+            data: email,
         }
 
-        const url =  getUrl('/api/accounts/validate/email/')
+        const url = getUrl('/api/accounts/validate/email/')
         try {
             const response = await axios.post(url, data)
-            setEmailCheckMessage('')
+            setEmailCheckMessage(response.data.message)
             setFormValidateChecker({
                 ...formValidateChecker,
-                'email': true
+                email: true,
             })
-
         } catch (error) {
-            console.error('error in check email:', error.response.data.error);
+            console.error('error in check email:', error.response.data.error)
             setEmailCheckMessage(error.response.data.error)
             setFormValidateChecker({
                 ...formValidateChecker,
-                'email': false
+                email: false,
             })
         }
     }
@@ -183,54 +216,65 @@ const SignupForm = () => {
     return (
         <div className="signup-content">
             <div className="signup-wrapper">
-                <h4 className="inputName">아이디</h4>
+                <div className="input-title">
+                    <h4 className="inputName">아이디</h4>
+                    <p className={formValidateChecker.username ? 'success-message' : 'error-message'}>
+                        {usernameMessage}
+                    </p>
+                </div>
                 <input
                     type="text"
                     placeholder="아이디를 입력해주세요"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    onBlur={checkUserName}
                     required
                 />
-                <p className="error-message">{usernameMessage}</p>
 
-                <h4 className="inputName">비밀번호</h4>
+                <div className="input-title">
+                    <h4 className="inputName">비밀번호</h4>
+                    <p className={formValidateChecker.password ? 'success-message' : 'error-message'}>
+                        {passwordMessage}
+                    </p>
+                </div>
                 <input
                     type="password"
                     placeholder="비밀번호를 입력해주세요"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    onBlur={checkPassword}
                     required
                 />
-                <p className="error-message">{passwordMessage}</p>
 
-                <h4 className="inputName">비밀번호 재확인</h4>
+                <div className="input-title">
+                    <h4 className="inputName">비밀번호 재확인</h4>
+                    <p className={formValidateChecker.passwordCheck ? 'success-message' : 'error-message'}>
+                        {passwordCheckMessage}
+                    </p>
+                </div>
                 <input
                     type="password"
                     placeholder="비밀번호를 입력해주세요"
                     value={passwordCheck}
                     onChange={(e) => setPasswordCheck(e.target.value)}
-                    onBlur={checkPasswordCheck}
                     required
                 />
-                <p className="error-message">{passwordCheckMessage}</p>
 
-                {/* ======================
-                    이메일 추가 시 인터페이스 적용
-                ==========================*/}
-                <h4 className="inputName">이메일</h4>
+                <div className="input-title">
+                    <h4 className="inputName">이메일</h4>
+                    <p className={formValidateChecker.email ? 'success-message' : 'error-message'}>
+                        {emailCheckMessage}
+                    </p>
+                </div>
                 <input
                     type="text"
                     placeholder="이메일주소를 입력해주세요"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    onBlur={checkEmail}
                     required
                 />
-                <p className="error-message">{emailCheckMessage}</p>
 
-                <h4 className="inputName">자기소개</h4>
+                <div className="input-title">
+                    <h4 className="inputName">자기소개</h4>
+                </div>
                 <textarea
                     className="signup-textarea"
                     placeholder="소개글을 입력해주세요"

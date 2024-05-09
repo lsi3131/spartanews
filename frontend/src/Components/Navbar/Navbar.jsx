@@ -3,22 +3,18 @@ import { Link } from 'react-router-dom'
 import fetchUser from '../../fetchUser'
 import './Navbar.css'
 
-// 로그아웃 프로세스
-const logoutProcess = () => {
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('refreshToken')
-    window.location.href = '/login'
-}
 // 인증된 사용자를 위한 네비게이션
-const AuthenticatedNavbar = () => {
+const AuthenticatedNavbar = ({ username }) => {
     return (
         <nav className="navbar">
             <div className="left">
                 <Link to="/">Home</Link>
                 <Link to="/write">Write</Link>
+                <Link to="/ask">Ask</Link>
+                <Link to="/show">Show</Link>
             </div>
             <div className="right">
-                <a onClick={logoutProcess}>Logout</a>
+                <Link to={`/profile/${username}/`}>{username}</Link>
             </div>
         </nav>
     )
@@ -31,6 +27,8 @@ const UnauthenticatedNavbar = () => {
             <div className="left">
                 <Link to="/">Home</Link>
                 <Link to="/write">Write</Link>
+                <Link to="/ask">Ask</Link>
+                <Link to="/show">Show</Link>
             </div>
             <div className="right">
                 <Link to="/login">Login</Link>
@@ -39,7 +37,7 @@ const UnauthenticatedNavbar = () => {
     )
 }
 
-const Navbar = ({ authenticated }) => {
-    return <div>{authenticated ? <AuthenticatedNavbar /> : <UnauthenticatedNavbar />}</div>
+const Navbar = ({ username }) => {
+    return <div>{username ? <AuthenticatedNavbar username={username} /> : <UnauthenticatedNavbar />}</div>
 }
 export default Navbar
