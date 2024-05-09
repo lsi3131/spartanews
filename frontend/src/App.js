@@ -61,7 +61,7 @@ function App() {
                     element={<AnonymouseRoute authenticated={authenticated} component={SignupForm} />}
                 />
                 <Route
-                    path="/detail/:articleId" element={<DetailArticleForm/>}
+                    path="/detail/:articleId" element={<DetailArticleForm username={userInfos.username}/>}
                 />
 
                 <Route path="/profile/:name" element={<ProfileForm username={userInfos.username} />} />
