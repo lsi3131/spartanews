@@ -8,7 +8,29 @@
 .article {
     border-bottom: 2px solid #00000029;
     padding: 20px 20px;
+    display: grid;
+    grid-template-columns:10px 20px 1fr;
+    grid-gap: 5px;
+}
+
+.article-head {
     display: flex;
+    align-items: baseline;
+    grid-column-start: 3;
+}
+
+.article-body {
+    margin-top: 10px;
+    grid-column-start: 3;
+}
+
+.article-bottom {
+    margin-top: 10px;
+    display: flex;
+    grid-column-start: 3;
+}
+.article-bottom p:last-child{
+    margin-left: 20px;
 }
 
 .article a {
