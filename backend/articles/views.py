@@ -170,16 +170,22 @@ class RecommendAPIView(APIView):
 
 class ArticleLineUpAPIView(APIView):
     def get(self, request):
+        article_type = request.GET.get('type', default=None)
         line_up = request.GET.get("line_up")
 
+        if article_type:
+            articles = Article.objects.filter(article_type=article_type)
+        else:
+            articles = Article.objects.all()
+
         if line_up == "likey":
-            articles = Article.objects.annotate(likey_count=Count('likey')).order_by('-likey_count')
+            articles = articles.annotate(likey_count=Count('likey')).order_by('-likey_count')
         elif line_up == "comments":
-            articles = Article.objects.annotate(comment_count=Count('comments')).order_by('-comment_count')
+            articles = articles.annotate(comment_count=Count('comments')).order_by('-comment_count')
         elif line_up == "views":
-            articles = Article.objects.order_by('-views')
+            articles = articles.order_by('-views')
         elif line_up == "points":
-            articles = Article.objects.order_by('-points')
+            articles = articles.order_by('-points')
         else:
             return Response({"error": "Invalid line-up value"}, status=status.HTTP_400_BAD_REQUEST)
         
