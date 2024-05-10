@@ -26,6 +26,8 @@
 ### 페이지네이션, 기사마다 point부여 및 정렬
 ![image](https://github.com/lsi3131/spartanews/assets/75594057/7c9d9806-0d78-4ae4-8afa-8d0144d781e3)
 
+### 글 타입에 따른 섹션 분류
+![image](https://github.com/lsi3131/spartanews/assets/75594057/0d3301eb-604f-4467-b323-33d33be42b7f)
 
 
 
