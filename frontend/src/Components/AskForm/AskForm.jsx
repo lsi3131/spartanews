@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode'
+import Pagination from '../Pagination/Pagination'
 import './AskForm.css';
 
 const extractDomain = (url) => {
@@ -12,53 +14,136 @@ const extractDomain = (url) => {
     return null;
 };
 
-const HomeForm = () => {
+const AskForm = () => {
     const [articles, setArticles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [currentPage, setCurrentPage] = useState(1)
+    const handlePageChange = (page) => {
+        setCurrentPage(page)
+    }
+    const [userId, setUserId] = useState(null)
+
+    function getArticleUrl(type) {
+        return `http://127.0.0.1:8000/api/articles/?page=${currentPage}&type=${type}`
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/api/articles/');
-                setArticles(response.data.results);
-                setLoading(false);
+                const response = await axios.get(getArticleUrl('ask'))
+                setArticles(response.data)
+                setLoading(false)
             } catch (error) {
-                setError('데이터를 불러오는데 실패했습니다.');
-                setLoading(false);
+                setError('데이터를 불러오는데 실패했습니다.')
+                setLoading(false)
             }
-        };
+        }
+        fetchData()
 
-        fetchData();
-    }, []);
+        const accessToken = localStorage.getItem('accessToken')
+        if (accessToken) {
+            const decodedToken = jwtDecode(accessToken)
+            setUserId(decodedToken.user_id)
+        }
+    }, [currentPage])
+
+    const likeButton = async (articleId) => {
+        const accessToken = localStorage.getItem('accessToken')
+
+        try {
+            const response = await axios.post(
+                `http://127.0.0.1:8000/api/articles/${articleId}/likey/`,
+                {},
+                { headers: { Authorization: `Bearer ${accessToken}` } },
+            )
+            const Updateresponse = await axios.get(getArticleUrl('ask'))
+            setArticles(Updateresponse.data)
+        } catch (error) {
+            console.error('에러가 발생했습니다:', error)
+        }
+    }
+
+    const UnlikeButton = async (articleId) => {
+        const accessToken = localStorage.getItem('accessToken')
+        try {
+            const response = await axios.delete(`http://127.0.0.1:8000/api/articles/${articleId}/likey/`, {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            })
+            const Updateresponse = await axios.get(getArticleUrl('ask'))
+            setArticles(Updateresponse.data)
+        } catch (error) {
+            console.error('에러가 발생했습니다:', error)
+        }
+    }
+
+    const formatDate = (dateString) => {
+        const currentDate = new Date()
+        const createdDate = new Date(dateString)
+        const timeDiff = Math.abs(currentDate.getTime() - createdDate.getTime())
+        const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24))
+
+        return `${daysDiff}일전`
+    }
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div>Loading...</div>
     }
 
     if (error) {
-        return <div>{error}</div>;
+        return <div>{error}</div>
     }
 
     return (
         <div className="home-content">
             <div className="home-wrapper">
                 <div className="articles">
-                    {articles.filter(article => article.article_type === "ask").map((article) => (
+                    {articles.results && articles.results.map((article, index) => (
                         <div key={article.id} className="article">
-                            <h2>
+                            <div className="article-num">{index +1 + (currentPage - 1) * articles.per_page}</div>
+                            <div className="article-head">
+                                <h2>
+                                    {article.article_link ? (
+                                        <a href={article.article_link}>
+                                            {article.title.length < 20
+                                                ? article.title
+                                                : article.title.slice(0, 20) + '...'}
+                                        </a>
+                                    ) : (
+                                        article.title
+                                    )}
+                                </h2>
+                            </div>
+                            <div className="article-body">
                                 <Link to={`/detail/${article.id}`}>
-                                    <p>{article.title}</p>
+                                    {article.content.length < 30
+                                        ? article.content
+                                        : article.content.slice(0, 30) + '...'}
                                 </Link>
-                            </h2>
-                            <span className="domain-name">({extractDomain(article.article_link)})</span>
-                            <p>{article.content}</p>
+                            </div>
+                            <div className="article-bottom">
+                                <span> by {article.author} | </span>
+                                <span>{formatDate(article.created_at)} | </span>
+                                <span>Comments: {article.comment_count} | </span>
+                                <span>Likes: {article.likey_count}</span>
+                                <div className="article-button">
+                                    {userId !== null &&
+                                        (article.likey_user_id.includes(userId) ? (
+                                            <button onClick={() => UnlikeButton(article.id)}> like ♥</button>
+                                        ) : (
+                                            <button onClick={() => likeButton(article.id)}>Unlike ♡</button>
+                                        ))}
+                                </div>
+                            </div>
                         </div>
                     ))}
                 </div>
             </div>
-        </div>
-    );
-};
 
-export default HomeForm;
+            <Pagination currentPage={currentPage} totalPages={articles.total_page} onPageChange={handlePageChange} />
+        </div>
+    )
+}
+
+export default AskForm;

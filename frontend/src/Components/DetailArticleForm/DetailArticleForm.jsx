@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {Link, useParams} from 'react-router-dom';
 import './DetailArticleForm.css';
 import CommentBox from "../CommentForm/CommentForm";
 
 const DetailArticleForm = ({userId, username}) => {
-    const { articleId } = useParams();
+    const {articleId} = useParams();
     const [article, setArticle] = useState(null);
 
     useEffect(() => {
@@ -43,12 +43,15 @@ const DetailArticleForm = ({userId, username}) => {
                         <a href={article.article_link}>{article.title}</a>
                     </div>
                     <div className="topicinfo">
-                        <span> by {article.author} | </span>
+                        <span> by <Link className="detail-author-link"
+                                        to={`/profile/${article.author}`}>{article.author}</Link> | </span>
                         <span>{formatDate(article.created_at)} | </span>
                         <span>Comments: {article.comment_count} | </span>
                         <span>Likes: {article.likey_count}</span>
                     </div>
-                    <div className="topic_contents">{article.content}</div>
+                    <div className="topic_contents">
+                        {article.content}
+                    </div>
 
                 </div>
             </div>

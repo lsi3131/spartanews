@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 const LoginForm = () => {
     const [username, setUsername] = React.useState('')
     const [password, setPassword] = React.useState('')
+    const [errorMessage, setErrorMessage] = React.useState('')
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -23,7 +24,8 @@ const LoginForm = () => {
             window.location.href = '/' // 혹은 메인 화면으로
         } catch (error) {
             console.error('로그인 오류:', error)
-            // 오류 처리 로직을 추가할 수 있습니다.
+            const message = '아이디 또는 비밀번호를 잘못 입력했습니다.'
+            setErrorMessage(message)
         }
     }
 
@@ -52,10 +54,13 @@ const LoginForm = () => {
                         />
                         <MdLock className="icon" />
                     </div>
+                    <div>
+                        <span className="error-message">{errorMessage}</span>
+                    </div>
                     <div className="remember-forget">
                         <label>
                             <input type="checkbox" /> 로그인 정보 저장
-                        </label>
+                        </label>`
                         <a href="#">패스워드를 잊어버리셨습니까?</a>
                     </div>
                     <button type="submit">로그인</button>
