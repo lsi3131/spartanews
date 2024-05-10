@@ -5,7 +5,7 @@
     left: 0;
     width: 100%;
     background-color: #fff; /* Navbar의 배경색을 흰색으로 설정합니다. */
-    padding: 20px 50px; /* Navbar의 내부 여백을 지정합니다. */
+    padding: 20px 80px; /* Navbar의 내부 여백을 지정합니다. */
     z-index: 1000; /* 다른 요소 위에 Navbar가 표시되도록 z-index를 설정합니다. */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과를 추가합니다. */
 }
@@ -14,7 +14,7 @@
 }
 
 .left a {
-    margin-right: 30px;
+    margin-right: 40px;
 }
 
 .navbar .right {

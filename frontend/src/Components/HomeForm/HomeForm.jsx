@@ -3,6 +3,8 @@ import axios from 'axios'
 import { Navigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 
+import likeImage from '../../Assets/images/00_like.png'
+import unlikeImage from '../../Assets/images/01_unlike.png'
 import './HomeForm.css'
 import { Link, Route } from 'react-router-dom'
 import Pagination from '../Pagination/Pagination'
@@ -97,48 +99,60 @@ const HomeForm = () => {
         <div className="home-content">
             <div className="home-wrapper">
                 <div className="articles">
-                    {articles.results && articles.results.map((article, index) => (
-                        <div key={article.id} className="article">
-                            <div className="article-num">{index + 1 + (currentPage - 1) * articles.per_page}</div>
-                            <div className="article-head">
-                                <p></p>
-                                <h2>
-                                    {article.article_link ? (
-                                        <a href={article.article_link}>
-                                            {article.title.length < 20
-                                                ? article.title
-                                                : article.title.slice(0, 20) + '...'}
-                                        </a>
-                                    ) : (
-                                        article.title
-                                    )}
-                                </h2>
-                                <span className="domain-name">({extractDomain(article.article_link)})</span>
-                            </div>
-                            <div className="article-body">
-                                <Link to={`/detail/${article.id}`}>
-                                    {article.content.length < 30
-                                        ? article.content
-                                        : article.content.slice(0, 30) + '...'}
-                                </Link>
-                            </div>
-                            <div className="article-bottom">
-                                <span> {article.points} points | </span>
-                                <span> by <Link className="article-author-link" to={`/profile/${article.author}`}>{article.author}</Link> | </span>
-                                <span>{formatDate(article.created_at)} | </span>
-                                <span>Comments: {article.comment_count} | </span>
-                                <span>Likes: {article.likey_count}</span>
-                                <div className="article-button">
-                                    {userId !== null &&
-                                        (article.likey_user_id.includes(userId) ? (
-                                            <button onClick={() => UnlikeButton(article.id)}> like ♥</button>
+                    {articles.results &&
+                        articles.results.map((article, index) => (
+                            <div key={article.id} className="article">
+                                <div className="article-num">{index + 1 + (currentPage - 1) * articles.per_page}</div>
+                                <div className="article-head">
+                                    <p></p>
+                                    <h2>
+                                        {article.article_link ? (
+                                            <a href={article.article_link}>
+                                                {article.title.length < 20
+                                                    ? article.title
+                                                    : article.title.slice(0, 20) + '...'}
+                                            </a>
                                         ) : (
-                                            <button onClick={() => likeButton(article.id)}>Unlike ♡</button>
-                                        ))}
+                                            article.title
+                                        )}
+                                    </h2>
+                                    <span className="domain-name">({extractDomain(article.article_link)})</span>
+                                </div>
+                                <div className="article-body">
+                                    <Link to={`/detail/${article.id}`}>
+                                        {article.content.length < 30
+                                            ? article.content
+                                            : article.content.slice(0, 30) + '...'}
+                                    </Link>
+                                </div>
+                                <div className="article-bottom">
+                                    <span> {article.points} points | </span>
+                                    <span>
+                                        {' '}
+                                        by{' '}
+                                        <Link className="article-author-link" to={`/profile/${article.author}`}>
+                                            {article.author}
+                                        </Link>{' '}
+                                        |{' '}
+                                    </span>
+                                    <span>{formatDate(article.created_at)} | </span>
+                                    <span>Comments: {article.comment_count} | </span>
+                                    <span>Likes: {article.likey_count}</span>
+                                    <div className="article-button">
+                                        {userId !== null &&
+                                            (article.likey_user_id.includes(userId) ? (
+                                                <button onClick={() => UnlikeButton(article.id)}>
+                                                    <img src={likeImage} alt="unlike" />
+                                                </button>
+                                            ) : (
+                                                <button onClick={() => likeButton(article.id)}>
+                                                    <img src={unlikeImage} alt="like" />
+                                                </button>
+                                            ))}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                 </div>
             </div>
 

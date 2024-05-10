@@ -8,10 +8,10 @@ const AuthenticatedNavbar = ({ username }) => {
     return (
         <nav className="navbar">
             <div className="left">
-                <Link to="/">Home</Link>
-                <Link to="/write">Write</Link>
-                <Link to="/ask">Ask</Link>
-                <Link to="/show">Show</Link>
+                <Link to="/">HOME</Link>
+                <Link to="/ask">ASK</Link>
+                <Link to="/show">SHOW</Link>
+                <Link to="/write">WRITE</Link>
             </div>
             <div className="right">
                 <Link to={`/profile/${username}/`}>{username}</Link>
@@ -25,13 +25,13 @@ const UnauthenticatedNavbar = () => {
     return (
         <nav className="navbar">
             <div className="left">
-                <Link to="/">Home</Link>
-                <Link to="/write">Write</Link>
-                <Link to="/ask">Ask</Link>
-                <Link to="/show">Show</Link>
+                <Link to="/">HOME</Link>
+                <Link to="/ask">ASK</Link>
+                <Link to="/show">SHOW</Link>
+                <Link to="/write">WRITE</Link>
             </div>
             <div className="right">
-                <Link to="/login">Login</Link>
+                <Link to="/login">LOGIN</Link>
             </div>
         </nav>
     )
