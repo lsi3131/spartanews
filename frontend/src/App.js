@@ -19,6 +19,7 @@ import fetchUser from './fetchUser'
 import AuthenticatedRoute from './AuthenticatedRoute'
 import AnonymouseRoute from './AnonymouseRoute'
 import ProfileForm from './Components/ProfileForm/ProfileForm'
+import SearchForm from './Components/SearchForm/SearchForm'
 
 import { jwtDecode } from 'jwt-decode'
 
@@ -56,14 +57,8 @@ function App() {
                     path="/write"
                     element={<AuthenticatedRoute authenticated={authenticated} component={WriteForm} />}
                 />
-                <Route
-                    path="/ask"
-                    element={<AuthenticatedRoute authenticated={true} component={AskForm} />}
-                />
-                <Route
-                    path="/Show"
-                    element={<AuthenticatedRoute authenticated={true} component={ShowForm} />}
-                />
+                <Route path="/ask" element={<AuthenticatedRoute authenticated={true} component={AskForm} />} />
+                <Route path="/Show" element={<AuthenticatedRoute authenticated={true} component={ShowForm} />} />
                 <Route
                     path="/login"
                     element={<AnonymouseRoute authenticated={authenticated} component={LoginForm} />}
@@ -73,10 +68,12 @@ function App() {
                     element={<AnonymouseRoute authenticated={authenticated} component={SignupForm} />}
                 />
                 <Route
-                    path="/detail/:articleId" element={<DetailArticleForm username={userInfos.username} userId={userInfos.user_id} />}
+                    path="/detail/:articleId"
+                    element={<DetailArticleForm username={userInfos.username} userId={userInfos.user_id} />}
                 />
 
                 <Route path="/profile/:name" element={<ProfileForm username={userInfos.username} />} />
+                <Route path="/search/" element={<SearchForm />} />
             </Routes>
         </>
     )

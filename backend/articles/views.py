@@ -10,7 +10,7 @@ from .models import Article, Comment
 from .article_validate import validate_article_data, validate_comment_data
 from django.db.models import Count
 from django.core.serializers import serialize
-from django.db.models import F, Func, ExpressionWrapper, IntegerField
+from django.db.models import Q, F, Func, ExpressionWrapper, IntegerField
 from django.utils import timezone
 
 
@@ -19,17 +19,21 @@ class ArticleAPIView(APIView):
 
     def get(self, request):
         article_type = request.GET.get('type', default=None)
+        search_query = request.GET.get('q', default=None)
+
         if article_type:
             articles = Article.objects.filter(article_type=article_type).order_by('-id')
         else:
             articles = Article.objects.order_by('-id')
 
-        # articles = get_list_or_404(Article.objects.order_by('-id'))
-        user = request.user
-        articles = Article.objects.order_by('-points')
+        if search_query:
+            articles = articles.filter(Q(title__icontains=search_query) | Q(content__icontains=search_query))
+
+        articles = articles.order_by('-points')  # Sorting by points
+
         pageination = CustomPagination()
-        page_articles=pageination.paginate_queryset(articles,request)
-        data =[{
+        page_articles = pageination.paginate_queryset(articles, request)
+        data = [{
             "id": article.id,
             "title": article.title,
             "content": article.content,
@@ -42,10 +46,8 @@ class ArticleAPIView(APIView):
             "likey_user_id": [likey.id for likey in article.likey.all()],
             "points": article.points,
             "views": article.views,
-
         } for article in page_articles]
         return pageination.get_paginated_response(data)
-
 
     def post(self, request):
         data = request.data.copy()
