@@ -123,6 +123,7 @@ const HomeForm = () => {
                                 </Link>
                             </div>
                             <div className="article-bottom">
+                                <span> {article.points} points | </span>
                                 <span> by <Link className="article-author-link" to={`/profile/${article.author}`}>{article.author}</Link> | </span>
                                 <span>{formatDate(article.created_at)} | </span>
                                 <span>Comments: {article.comment_count} | </span>
