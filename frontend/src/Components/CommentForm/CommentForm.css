@@ -64,12 +64,25 @@
     display: flex;
 }
 
-.comment-bottom button {
-    width: auto;
-    text-align: left;
+.comment-bottom {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }
 
-.reply-comment-button {
+.comment-bottom > span {
+    width: auto;
+    background-color: transparent;
+    color: black;
+    font-size: 16px;
+    /*height: 40px;*/
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.comment-bottom > button {
+    width: auto;
+    text-align: left;
     height: 40px;
     background-color: transparent;
     color: red;
@@ -115,7 +128,8 @@
 .comment-vertical {
     display: flex;
     justify-content: right;
-    flex-direction: column;}
+    flex-direction: column;
+}
 
 .comment-justify-end {
     display: flex;

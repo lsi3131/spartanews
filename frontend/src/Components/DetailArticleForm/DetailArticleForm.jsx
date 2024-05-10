@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import './DetailArticleForm.css';
 import CommentBox from "../CommentForm/CommentForm";
 
-const DetailArticleForm = ({username}) => {
+const DetailArticleForm = ({userId, username}) => {
     const { articleId } = useParams();
     const [article, setArticle] = useState(null);
 
@@ -53,7 +53,7 @@ const DetailArticleForm = ({username}) => {
                 </div>
             </div>
             <div className="comment-form">
-                <CommentBox articleId={articleId} username={username}/>
+                <CommentBox articleId={articleId} username={username} userId={userId}/>
             </div>
         </div>
     );
