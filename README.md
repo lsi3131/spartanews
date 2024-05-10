@@ -4,6 +4,7 @@
 
 ## 목차
 - [프론트엔드](#프론트엔드)
+- [주요기능](#주요기능)
 - [개발 기간](#개발-기간)
 - [API](#API)
 - [기술스택](#기술-스택)
@@ -18,6 +19,18 @@
 
 <br>
 
+## 주요기능
+### 타입에 맞는 글작성
+![image](https://github.com/lsi3131/spartanews/assets/75594057/8c1cca7d-d413-454f-8d80-550e41c3c9dc)
+
+### 페이지네이션, 기사마다 point부여 및 정렬
+![image](https://github.com/lsi3131/spartanews/assets/75594057/7c9d9806-0d78-4ae4-8afa-8d0144d781e3)
+
+
+
+
+
+<br>
 ## API
 ![스크린샷 2024-05-09 150900](https://github.com/lsi3131/spartanews/assets/75594057/8ecb35b0-9f7e-4882-9b5d-c3041334aa34)
 ![스크린샷 2024-05-09 151027](https://github.com/lsi3131/spartanews/assets/75594057/f94412fb-f294-4883-ac91-548550655770)
