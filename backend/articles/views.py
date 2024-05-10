@@ -32,7 +32,7 @@ class ArticleAPIView(APIView):
         elif line_up == "points":
             articles = articles.order_by('-points')
         else:
-            return Response({"error": "Invalid line-up value"}, status=status.HTTP_400_BAD_REQUEST)
+            articles = articles.order_by('-id')
 
         pagination = CustomPagination()
         page_articles = pagination.paginate_queryset(articles, request)
