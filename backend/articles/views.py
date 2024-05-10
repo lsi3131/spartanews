@@ -9,9 +9,6 @@ from .util import CustomPagination
 from .models import Article, Comment
 from .article_validate import validate_article_data, validate_comment_data
 from django.db.models import Count
-from django.core.serializers import serialize
-from django.db.models import F, Func, ExpressionWrapper, IntegerField
-from django.utils import timezone
 
 
 class ArticleAPIView(APIView):
@@ -24,9 +21,8 @@ class ArticleAPIView(APIView):
         else:
             articles = Article.objects.order_by('-id')
 
-        # articles = get_list_or_404(Article.objects.order_by('-id'))
         user = request.user
-        articles = Article.objects.order_by('-points')
+        articles = get_list_or_404(Article.objects.order_by('-id'))
         pageination = CustomPagination()
         page_articles=pageination.paginate_queryset(articles,request)
         data =[{
@@ -173,14 +169,41 @@ class RecommendAPIView(APIView):
 
 
 class ArticleLineUpAPIView(APIView):
-    def post(self, request):
-        line_up = request.data.get("line-up")
+    def get(self, request):
+        line_up = request.GET.get("line_up")
 
         if line_up == "likey":
             articles = Article.objects.annotate(likey_count=Count('likey')).order_by('-likey_count')
+        elif line_up == "comments":
+            articles = Article.objects.annotate(comment_count=Count('comments')).order_by('-comment_count')
+        elif line_up == "views":
+            articles = Article.objects.order_by('-views')
+        elif line_up == "points":
+            articles = Article.objects.order_by('-points')
         else:
             return Response({"error": "Invalid line-up value"}, status=status.HTTP_400_BAD_REQUEST)
         
+        pagination = CustomPagination()
+        page_articles = pagination.paginate_queryset(articles,request)
+        data = [
+            {
+                "id": article.id,
+            "title": article.title,
+            "content": article.content,
+            "article_type": article.article_type,
+            "article_link": article.article_link,
+            "author": article.author.username,
+            "created_at": article.created_at,
+            "comment_count": article.comments.count(),
+            "likey_count": article.likey.count(),
+            "likey_user_id": [likey.id for likey in article.likey.all()],
+            "points": article.points,
+            "views": article.views,
+            } for article in page_articles
+        ]
+        return pagination.get_paginated_response(data)
+
+
         return Response([
             {
             "id": article.id,
@@ -192,6 +215,9 @@ class ArticleLineUpAPIView(APIView):
             "created_at": article.created_at,
             "comment_count": article.comments.count(),
             "likey_count": article.likey.count(),
+            "likey_user_id": [likey.id for likey in article.likey.all()],
+            "points": article.points,
+            "views": article.views,
             }
             for article in articles
         ])
