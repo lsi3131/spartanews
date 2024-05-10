@@ -21,10 +21,12 @@
 
 ## 주요기능
 ### 타입에 맞는 글작성
-![image](https://github.com/lsi3131/spartanews/assets/75594057/8c1cca7d-d413-454f-8d80-550e41c3c9dc)
+![image](https://github.com/lsi3131/spartanews/assets/75594057/4c445cc4-c69a-45da-9e34-23bf479250dd)
+
 
 ### 페이지네이션, 기사마다 point부여 및 정렬
-![image](https://github.com/lsi3131/spartanews/assets/75594057/7c9d9806-0d78-4ae4-8afa-8d0144d781e3)
+![image](https://github.com/lsi3131/spartanews/assets/75594057/1a78c2cb-1545-4e25-8c67-6cc1fc2bfd15)
+
 
 ### 글 타입에 따른 섹션 분류
 ![image](https://github.com/lsi3131/spartanews/assets/75594057/0d3301eb-604f-4467-b323-33d33be42b7f)
