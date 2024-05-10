@@ -9,9 +9,6 @@ from .util import CustomPagination
 from .models import Article, Comment
 from .article_validate import validate_article_data, validate_comment_data
 from django.db.models import Count
-from django.core.serializers import serialize
-from django.db.models import F, Func, ExpressionWrapper, IntegerField
-from django.utils import timezone
 
 
 class ArticleAPIView(APIView):
@@ -19,33 +16,43 @@ class ArticleAPIView(APIView):
 
     def get(self, request):
         article_type = request.GET.get('type', default=None)
+        line_up = request.GET.get("line_up")
+
         if article_type:
-            articles = Article.objects.filter(article_type=article_type).order_by('-id')
+            articles = Article.objects.filter(article_type=article_type)
         else:
-            articles = Article.objects.order_by('-id')
+            articles = Article.objects.all()
 
-        # articles = get_list_or_404(Article.objects.order_by('-id'))
-        user = request.user
-        articles = Article.objects.order_by('-points')
-        pageination = CustomPagination()
-        page_articles=pageination.paginate_queryset(articles,request)
-        data =[{
-            "id": article.id,
-            "title": article.title,
-            "content": article.content,
-            "article_type": article.article_type,
-            "article_link": article.article_link,
-            "author": article.author.username,
-            "created_at": article.created_at,
-            "comment_count": article.comments.count(),
-            "likey_count": article.likey.count(),
-            "likey_user_id": [likey.id for likey in article.likey.all()],
-            "points": article.points,
-            "views": article.views,
+        if line_up == "likey":
+            articles = articles.annotate(likey_count=Count('likey')).order_by('-likey_count')
+        elif line_up == "comments":
+            articles = articles.annotate(comment_count=Count('comments')).order_by('-comment_count')
+        elif line_up == "views":
+            articles = articles.order_by('-views')
+        elif line_up == "points":
+            articles = articles.order_by('-points')
+        else:
+            return Response({"error": "Invalid line-up value"}, status=status.HTTP_400_BAD_REQUEST)
 
-        } for article in page_articles]
-        return pageination.get_paginated_response(data)
-
+        pagination = CustomPagination()
+        page_articles = pagination.paginate_queryset(articles, request)
+        data = [
+            {
+                "id": article.id,
+                "title": article.title,
+                "content": article.content,
+                "article_type": article.article_type,
+                "article_link": article.article_link,
+                "author": article.author.username,
+                "created_at": article.created_at,
+                "comment_count": article.comments.count(),
+                "likey_count": article.likey.count(),
+                "likey_user_id": [likey.id for likey in article.likey.all()],
+                "points": article.points,
+                "views": article.views,
+            } for article in page_articles
+        ]
+        return pagination.get_paginated_response(data)
 
     def post(self, request):
         data = request.data.copy()
@@ -57,8 +64,7 @@ class ArticleAPIView(APIView):
             {"message": "게시글이 작성되었습니다."},
             status=status.HTTP_201_CREATED
         )
-        
-    
+
 
 class ArticleDetailAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -84,7 +90,7 @@ class ArticleDetailAPIView(APIView):
             "comment_count": article.comments.count(),
             "likey_count": article.likey.count(),
         })
-    
+
     def put(self, request, article_pk):
         article = get_object_or_404(Article, id=article_pk)
         if article.author != request.user:
@@ -121,81 +127,53 @@ class ArticleDetailAPIView(APIView):
         )
 
 
-
 class LikeyArticleAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, article_pk):
-        article = get_object_or_404(Article,pk=article_pk)
+        article = get_object_or_404(Article, pk=article_pk)
         user = request.user.id
-        
+
         if article.likey.filter(pk=user).exists():
             return Response({'message': ''' '좋아요 취소'를 눌러주세요 '''}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         article.likey.add(user)
         article.increase_likes_point()  # 포인트 재계산
-        return Response({'message': '좋아요'},status=status.HTTP_200_OK)
-        
+        return Response({'message': '좋아요'}, status=status.HTTP_200_OK)
 
     def delete(self, request, article_pk):
-        article = get_object_or_404(Article,pk=article_pk)
+        article = get_object_or_404(Article, pk=article_pk)
         user = request.user.id
 
         if not article.likey.filter(pk=user):
-            return Response({'message': ''' '좋아요'를 눌러주세요. '''},status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response({'message': ''' '좋아요'를 눌러주세요. '''}, status=status.HTTP_400_BAD_REQUEST)
+
         article.likey.remove(user)
-        return Response({'message': '좋아요 취소'},status=status.HTTP_200_OK)
+        return Response({'message': '좋아요 취소'}, status=status.HTTP_200_OK)
+
 
 class RecommendAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, article_pk,comment_pk ):
+    def post(self, request, article_pk, comment_pk):
         comment = get_object_or_404(Comment, pk=comment_pk)
         user = request.user.id
 
         if comment.recommend.filter(pk=user).exists():
-            return Response({'message':''' '추천 취소'를 눌러주세요 '''},status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response({'message': ''' '추천 취소'를 눌러주세요 '''}, status=status.HTTP_400_BAD_REQUEST)
+
         comment.recommend.add(user)
-        return Response({'message': '추천'},status=status.HTTP_200_OK)
+        return Response({'message': '추천'}, status=status.HTTP_200_OK)
 
-
-    def delete(self, request, article_pk,comment_pk ):
+    def delete(self, request, article_pk, comment_pk):
         comment = get_object_or_404(Comment, pk=comment_pk)
         user = request.user.id
-        
+
         if not comment.recommend.filter(pk=user):
-            return Response({'message':''' '추천'을 눌러주세요 '''},status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({'message': ''' '추천'을 눌러주세요 '''}, status=status.HTTP_400_BAD_REQUEST)
         comment.recommend.remove(user)
-        return Response({'message': '추천 취소'},status=status.HTTP_200_OK)
+        return Response({'message': '추천 취소'}, status=status.HTTP_200_OK)
 
-
-class ArticleLineUpAPIView(APIView):
-    def post(self, request):
-        line_up = request.data.get("line-up")
-
-        if line_up == "likey":
-            articles = Article.objects.annotate(likey_count=Count('likey')).order_by('-likey_count')
-        else:
-            return Response({"error": "Invalid line-up value"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        return Response([
-            {
-            "id": article.id,
-            "title": article.title,
-            "content": article.content,
-            "article_type": article.article_type,
-            "article_link": article.article_link,
-            "author": article.author.username,
-            "created_at": article.created_at,
-            "comment_count": article.comments.count(),
-            "likey_count": article.likey.count(),
-            }
-            for article in articles
-        ])
-    
 
 class ArticleCommentsAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -310,6 +288,6 @@ class CommentDetailAPIView(APIView):
             )
         comment.delete()
         return Response(
-        {"message": "댓글이 삭제되었습니다."},
-        status=status.HTTP_204_NO_CONTENT
-    )
+            {"message": "댓글이 삭제되었습니다."},
+            status=status.HTTP_204_NO_CONTENT
+        )
