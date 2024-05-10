@@ -13,9 +13,9 @@
     align-items: baseline;
 }
 
-.article-button button{
+.article-button button {
     width: 80px;
-    margin-left: 20px ;
+    margin-left: 20px;
 }
 
 .article-head {
@@ -60,4 +60,20 @@
 
 .article-author-link {
     font-weight: bold;
+}
+
+.article-button > button {
+    margin-left: 20px;
+    width: 30px;
+    background-color: transparent;
+    border: none;
+}
+
+.article-button > button > img {
+    width: 20px;
+    height: 20px;
+}
+
+.article-button > button > img:hover {
+    background-color: #00000029;
 }
