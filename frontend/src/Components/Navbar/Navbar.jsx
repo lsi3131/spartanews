@@ -31,7 +31,7 @@ const UnauthenticatedNavbar = () => {
                 <Link to="/write">WRITE</Link>
             </div>
             <div className="right">
-                <Link to="/login">LOGOUT</Link>
+                <Link to="/login">LOGIN</Link>
             </div>
         </nav>
     )
