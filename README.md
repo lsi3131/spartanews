@@ -32,6 +32,7 @@
 
 <br>
 ## API
+
 ![스크린샷 2024-05-09 150900](https://github.com/lsi3131/spartanews/assets/75594057/8ecb35b0-9f7e-4882-9b5d-c3041334aa34)
 ![스크린샷 2024-05-09 151027](https://github.com/lsi3131/spartanews/assets/75594057/f94412fb-f294-4883-ac91-548550655770)
 ![스크린샷 2024-05-09 150935](https://github.com/lsi3131/spartanews/assets/75594057/54dea6a3-7bd2-45aa-897c-69d88ba4f518)
