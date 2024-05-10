@@ -10,14 +10,16 @@ from .models import Article, Comment
 from .article_validate import validate_article_data, validate_comment_data
 from django.db.models import Count
 from django.core.serializers import serialize
-
+from django.db.models import F, Func, ExpressionWrapper, IntegerField
+from django.utils import timezone
 
 
 class ArticleAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
-        articles = get_list_or_404(Article.objects.order_by('-id'))
+        user = request.user
+        articles = Article.objects.order_by('-points')
         pageination = CustomPagination()
         page_articles=pageination.paginate_queryset(articles,request)
         data =[{
@@ -30,7 +32,10 @@ class ArticleAPIView(APIView):
             "created_at": article.created_at,
             "comment_count": article.comments.count(),
             "likey_count": article.likey.count(),
-            "likey_user_id": [likey.id for likey in article.likey.all()], #get이나 filter로 변경해서 값만 가져오기
+            "likey_user_id": [likey.id for likey in article.likey.all()],
+            "points": article.points,
+            "views": article.views,
+
         } for article in page_articles]
         return pageination.get_paginated_response(data)
 
@@ -53,6 +58,7 @@ class ArticleDetailAPIView(APIView):
 
     def get(self, request, article_pk):
         article = get_object_or_404(Article, id=article_pk)
+        article.increase_views_point()  # 포인트 재계산
         return Response({
             "id": article.id,
             "title": article.title,
@@ -120,6 +126,7 @@ class LikeyArticleAPIView(APIView):
             return Response({'message': ''' '좋아요 취소'를 눌러주세요 '''}, status=status.HTTP_400_BAD_REQUEST)
         
         article.likey.add(user)
+        article.increase_likes_point()  # 포인트 재계산
         return Response({'message': '좋아요'},status=status.HTTP_200_OK)
         
 
@@ -160,14 +167,10 @@ class RecommendAPIView(APIView):
 
 class ArticleLineUpAPIView(APIView):
     def post(self, request):
-        # 좋아요를 기준으로 정렬하도록
-        # `line-up`이라는 key에 'likey'가 들어오도록 합니다.
         line_up = request.data.get("line-up")
 
         if line_up == "likey":
-            # Article에 likey속성을 추가하고, 정렬합니다.
             articles = Article.objects.annotate(likey_count=Count('likey')).order_by('-likey_count')
-        # 'likey'가 기준으로 입력되지 않은 경우, 오류를 반환합니다.
         else:
             return Response({"error": "Invalid line-up value"}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -245,8 +248,8 @@ class ArticleCommentsAPIView(APIView):
         if parent_comment_id:
             parent_comment = get_object_or_404(Comment, id=parent_comment_id)
         article = get_object_or_404(Article, id=article_pk)
-
         Comment.objects.create(content=content, article=article, author=request.user, parent_comment=parent_comment)
+        article.increase_comments_point()
         return Response(
             {"message": "댓글이 작성되었습니다."},
             status=status.HTTP_201_CREATED
