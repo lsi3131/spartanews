@@ -58,7 +58,7 @@ class ArticleDetailAPIView(APIView):
 
     def get(self, request, article_pk):
         article = get_object_or_404(Article, id=article_pk)
-        article.increase_views()  # 포인트 재계산
+        article.increase_views_point()  # 포인트 재계산
         return Response({
             "id": article.id,
             "title": article.title,
@@ -126,7 +126,7 @@ class LikeyArticleAPIView(APIView):
             return Response({'message': ''' '좋아요 취소'를 눌러주세요 '''}, status=status.HTTP_400_BAD_REQUEST)
         
         article.likey.add(user)
-        article.increase_likes()  # 포인트 재계산
+        article.increase_likes_point()  # 포인트 재계산
         return Response({'message': '좋아요'},status=status.HTTP_200_OK)
         
 
@@ -248,8 +248,8 @@ class ArticleCommentsAPIView(APIView):
         if parent_comment_id:
             parent_comment = get_object_or_404(Comment, id=parent_comment_id)
         article = get_object_or_404(Article, id=article_pk)
-
         Comment.objects.create(content=content, article=article, author=request.user, parent_comment=parent_comment)
+        article.increase_comments_point()
         return Response(
             {"message": "댓글이 작성되었습니다."},
             status=status.HTTP_201_CREATED

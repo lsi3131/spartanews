@@ -31,21 +31,23 @@ class Article(models.Model):
         points = (self.comments.count() * comments_weight) + \
                  (self.likey.count() * likes_weight) + \
                  (self.views * views_weight)
-        print(self.likey.count())
         elapsed_hours = (timezone.now() - self.created_at).seconds // 3600
         points -= elapsed_hours
         
         self.points = points if points >= 0 else 0  # 포인트가 음수가 되지 않도록 처리
-        print(self.points)
         self.save()
 
-    def increase_views(self):
+    def increase_views_point(self):
         self.views += 1
         self.calculate_points()
 
-    def increase_likes(self):
+    def increase_likes_point(self):
         self.calculate_points()
 
+    def increase_comments_point(self):
+        self.calculate_points()
+
+        
 class Comment(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
